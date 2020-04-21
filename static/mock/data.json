@@ -1,0 +1,22 @@
+{
+  "name": "说java",
+  "url": "https://www.baidu.com",
+  "page": 1,
+  "isNonProject": true,
+  "address": {
+    "street": "大门",
+    "city": "湖南",
+    "country": "中国"
+  },
+  "links": [
+    {"name": "bili",
+      "url": "https://space.bilibili.com/95256449"
+    },
+    {"name": "bizhan",
+      "url": "https://space.bilibili.com/95256449"
+    },
+    {"name": "baidu",
+      "url": "https://www.baidu.com/"
+    }
+  ]
+}
