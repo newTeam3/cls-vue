@@ -1,5 +1,8 @@
 <template>
-    <h1>用户列表</h1>
+  <div>
+    <h1>测试</h1>
+  <img src="">
+  </div>
 </template>
 
 <script>

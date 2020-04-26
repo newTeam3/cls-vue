@@ -17,7 +17,7 @@
       title="温馨提示"
       :visible.sync="dialogVisible"
       width="30%"
-      :before-close="handleClose">
+      >
       <span>请输入账号和密码</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -57,7 +57,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             // 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-            this.$router.push("/main");
+            this.$router.push("/index");
             // this.$router.push("/main/"+this.form.username);
           } else {
             this.dialogVisible = true;
