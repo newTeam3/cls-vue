@@ -130,8 +130,8 @@
       </div>
     </el-dialog>
 <!--    批量禁用弹窗-->
-    <el-dialog title="删除" :visible.sync="delVisible" width="30%" @click="closeDialog" center>
-      <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+    <el-dialog title="批量禁用" :visible.sync="delVisible" width="30%" @click="closeDialog" center>
+      <div class="del-dialog-cnt">危险操作，确定禁用吗？</div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="closeDialog">取消</el-button>
         <el-button size="small" type="primary" :loading="loading" class="title" @click="deleteAll" >保存</el-button>
