@@ -1,0 +1,7 @@
+{
+  "id": 1,
+  "name": "admin",
+  "pwd": "admin",
+  "status": 1,
+  "token": "this.isa.token"
+}

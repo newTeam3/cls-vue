@@ -24,6 +24,9 @@ export default new Router({
       path:'/index',
       name:'Index',
       component:Index,
+      meta:{
+        requireAuth: true
+      },
       children:[
         //如果要使用props传参的方式，要添加props:true
         //用户菜单
@@ -36,7 +39,7 @@ export default new Router({
     {
       path:'/goHome',
       name:'goHome',
-      component: Index
+      redirect: Index
     },
     {
       path: '*',

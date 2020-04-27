@@ -15,7 +15,7 @@
         <span>超级管理员</span>
       </template>
       <el-menu-item index="2-1">设置</el-menu-item>
-      <el-menu-item index="2-2">退出</el-menu-item>
+      <el-menu-item index="2-2" @click="logout">退出</el-menu-item>
     </el-submenu>
   </el-menu>
 </template>
@@ -32,6 +32,10 @@
       methods: {
         handleSelect(key, keyPath) {
           console.log(key, keyPath);
+        },
+        logout(){
+          window.sessionStorage.clear()
+          this.$router.push("/login")
         }
       }
     }
