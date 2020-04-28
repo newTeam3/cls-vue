@@ -21,3 +21,13 @@ vuecli+element ui班级管理系统后台
 ├── package.json     # 项目依赖
 └── README.md        # 项目文档
 
+##### 运行项目
+
+# install dependencies 
+npm install
+
+# serve with hot reload at localhost:8080
+npm run dev
+
+
+
