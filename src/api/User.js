@@ -1,5 +1,8 @@
 import axios from "axios";
 
+export const login = (params) => {
+  return axios.post("/login",params).then(res=>res.data);
+}
 //分页查询用户
 export const findAllUser = (params) => {
   // return req("post", "/findAll", params)
@@ -32,6 +35,7 @@ export const addUser = (params) => {
   return axios.get("/addUser",{
     params: params
   }).then(res=>res.data);
+
 };
 export const login = (params) => {
   return axios.post("/auth",params).then(res=>res);

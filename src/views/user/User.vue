@@ -209,6 +209,7 @@
       methods: {
         //将分页参数及查询条件发送到后端，获取查询内容
         getData(parameter) {
+          console.log(parameter)
           this.loading = true
           //分页查询
           findAllUser(parameter)
