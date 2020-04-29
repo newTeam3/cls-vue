@@ -2,11 +2,11 @@
   <div>
     <el-form ref="loginForm" :model="form" :rules="rules" label-width="80px" class="login-box">
       <h3 class="login-title">欢迎登录(账号密码不为空即可)</h3>
-      <el-form-item label="账号" prop="name">
-        <el-input type="text" placeholder="请输入账号" v-model="form.name"/>
+      <el-form-item label="账号" prop="username">
+        <el-input type="text" placeholder="请输入账号" v-model="form.username"/>
       </el-form-item>
-      <el-form-item label="密码" prop="pwd">
-        <el-input type="password" placeholder="请输入密码" v-model="form.pwd"/>
+      <el-form-item label="密码" prop="password">
+        <el-input type="password" placeholder="请输入密码" v-model="form.password"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" v-on:click="onSubmit('loginForm')">登录</el-button>
@@ -29,21 +29,22 @@
 
 <script>
   import axios from 'axios'
+  import {login} from '@/api/User'
   export default {
     name: "Login",
     data() {
       return {
         form: {
-          name: '',
-          pwd: ''
+          username: '',
+          password: ''
         },
 
         // 表单验证，需要在 el-form-item 元素中增加 prop 属性
         rules: {
-          name: [
+            username: [
             {required: true, message: '账号不可为空', trigger: 'blur'}
           ],
-          pwd: [
+            password: [
             {required: true, message: '密码不可为空', trigger: 'blur'}
           ]
         },
@@ -58,16 +59,22 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             // 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-            // axios.get('../data.json').then(res=>{
-            //   // sessionStorage.setItem('token',)
-            //   // this.$router.push("/index");
-            //   // // this.$router.push("/main/"+this.form.username);
-            //   console.log(res)
-            // })
-            // window.sessionStorage.setItem('token','this.isa.token')
-            this.$store.commit("login","this.isa.token")
-            console.log("success")
-            this.$router.push("/index")
+              login(this.form).then(res => {
+                  if(res.status==200){
+                      this.$message({
+                          message: "登录成功",
+                          type: "success"
+                      });
+                      this.$store.commit("login",res.data.token)
+                      console.log("success")
+                      this.$router.push("/index")
+                  }else{
+                      this.$message({
+                          message: "登录失败",
+                          type: "error"
+                      });
+                  }
+              })
           } else {
             this.dialogVisible = true;
             return false;

@@ -33,4 +33,7 @@ export const addUser = (params) => {
     params: params
   }).then(res=>res.data);
 };
+export const login = (params) => {
+  return axios.post("/auth",params).then(res=>res);
+};
 
