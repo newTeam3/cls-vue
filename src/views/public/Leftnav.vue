@@ -8,6 +8,7 @@
     background-color="#545c64"
     text-color="#fff"
     active-text-color="#ffd04b"
+    :unique-opened="true"
     style="height: 100%">
     <div class="logobox">
       <img class="logoimg" src="@/assets/img/logo.png" alt="">
@@ -30,38 +31,60 @@
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
-    <el-menu-item index="2">
-      <i class="el-icon-menu"></i>
-      <span slot="title">小组管理</span>
-    </el-menu-item>
-    <el-menu-item index="3">
-      <i class="el-icon-document"></i>
-      <span slot="title">学院管理</span>
-    </el-menu-item>
-    <el-menu-item index="4">
+
+
+    <el-submenu index="2">
+      <template slot="title">
       <i class="el-icon-setting"></i>
-      <span slot="title">班级管理</span>
-    </el-menu-item>
-    <el-menu-item index="5">
-      <i class="el-icon-setting"></i>
-      <span slot="title">职务管理</span>
-    </el-menu-item>
-    <el-menu-item index="6">
+      <span slot="title">公共管理</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="2-1">
+          <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
+          <i class="el-icon-menu"></i>
+          <router-link to="/cls/classes">班级管理</router-link>
+        </el-menu-item>
+        <el-menu-item index="2-2">
+          <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
+          <i class="el-icon-menu"></i>
+          <router-link to="">学院管理</router-link>
+        </el-menu-item>
+        <el-menu-item index="2-3">
+          <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
+          <i class="el-icon-menu"></i>
+          <router-link to="">小组管理</router-link>
+        </el-menu-item>
+        <el-menu-item index="2-4">
+          <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
+          <i class="el-icon-menu"></i>
+          <router-link to="">职称管理</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-submenu>
+    <el-submenu index="3">
+      <template slot="title">
       <i class="el-icon-setting"></i>
       <span slot="title">文章管理</span>
-    </el-menu-item>
-    <el-menu-item index="7">
+      </template>
+    </el-submenu>
+    <el-submenu index="4">
+      <template slot="title">
       <i class="el-icon-setting"></i>
       <span slot="title">在线答题</span>
-    </el-menu-item>
-    <el-menu-item index="8">
+      </template>
+    </el-submenu>
+    <el-submenu index="5">
+      <template slot="title">
       <i class="el-icon-setting"></i>
       <span slot="title">公告管理</span>
-    </el-menu-item>
-    <el-menu-item index="9">
+      </template>
+    </el-submenu>
+    <el-submenu index="6">
+      <template slot="title">
       <i class="el-icon-setting"></i>
       <span slot="title">日周报管理</span>
-    </el-menu-item>
+      </template>
+    </el-submenu>
   </el-menu>
 
 </template>

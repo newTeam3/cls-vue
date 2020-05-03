@@ -5,9 +5,11 @@ import Login from "../views/Login";
 import NotFound from "../views/NotFound";
 import Index from "../views/Index";
 //用于嵌套的路由组件
+//用户模块组件
 import User from "../views/user/User";
 import List from "../views/user/List";
-
+//班级管理模块组件
+import Classes from "../views/classes/Classes";
 
 
 Vue.use(Router);
@@ -32,7 +34,7 @@ export default new Router({
         //用户菜单
         {path:'/users/page',name:'User',component:User},
         {path:'/users/test',component:List},
-
+        {path:'/cls/classes',component:Classes}
       ]
     },
     //重定向
