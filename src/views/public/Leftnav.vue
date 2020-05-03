@@ -65,16 +65,28 @@
       <template slot="title">
       <i class="el-icon-setting"></i>
       <span slot="title">文章管理</span>
-      </template>
-    </el-submenu>
-    <el-submenu index="4">
+    </el-menu-item>
+    <el-submenu index="7">
       <template slot="title">
-      <i class="el-icon-setting"></i>
-      <span slot="title">在线答题</span>
+        <i class="el-icon-school"></i>
+        <span>在线答题</span>
       </template>
+      <el-menu-item-group>
+        <el-menu-item index="7-1">
+          <router-link to="/Answer/Bank">题库类型</router-link>
+        </el-menu-item>
+        <el-menu-item index="7-2">
+          <router-link to="/Answer/Wor">题目</router-link>
+        </el-menu-item>
+        <el-menu-item index="7-3">
+          <router-link to="/Answer/Exam">用户成绩</router-link>
+        </el-menu-item>
+        <el-menu-item index="7-3">
+          <router-link to="/Answer/Paper">纸卷信息</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
     </el-submenu>
-    <el-submenu index="5">
-      <template slot="title">
+    <el-menu-item index="8">
       <i class="el-icon-setting"></i>
       <span slot="title">公告管理</span>
       </template>

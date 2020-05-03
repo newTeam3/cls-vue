@@ -10,6 +10,12 @@ import User from "../views/user/User";
 import List from "../views/user/List";
 //班级管理模块组件
 import Classes from "../views/classes/Classes";
+import Bank from "../views/Answer/Bank";
+import Wor from "../views/Answer/Wor";
+import Exam from "../views/Answer/Exam";
+import Paper from "../views/Answer/Paper";
+import UpdateBank from "../views/Answer/UpdateBank";
+import AddBank from "../views/Answer/AddBank";
 
 
 Vue.use(Router);
@@ -34,6 +40,13 @@ export default new Router({
         //用户菜单
         {path:'/users/page',name:'User',component:User},
         {path:'/users/test',component:List},
+        {path:'/Answer/Bank',component:Bank},
+        {path:'/Answer/Wor',component:Wor},
+        {path:'/Answer/Exam',component:Exam},
+        {path:'/Answer/Paper',component:Paper},
+        {path:'/Answer/UpdateBank',component:UpdateBank},
+        {path:'/Answer/AddBank',component:AddBank},
+
         {path:'/cls/classes',component:Classes}
       ]
     },
