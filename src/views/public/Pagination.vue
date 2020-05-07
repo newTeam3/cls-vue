@@ -1,5 +1,12 @@
 <template>
-  <el-pagination  class="page-box" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :current-page="childMsg.currentPage" :page-sizes="[5, 10, 15, 20]" :page-size="childMsg.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="childMsg.total" style="text-align: center">
+  <el-pagination  class="page-box"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  background :current-page="childMsg.currentPage"
+                  :page-sizes="[5, 10, 15, 20]"
+                  :page-size="childMsg.pageSize"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="childMsg.total" style="text-align: center">
   </el-pagination>
 </template>
 

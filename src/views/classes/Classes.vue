@@ -219,7 +219,10 @@
       callFather(parm) {
         this.formInline.page = parm.currentPage
         this.formInline.rows = parm.pageSize
-        this.getData(this.formInline)
+        let para = {page: this.formInline.page,
+          rows:this.formInline.rows,
+          key:{"name":this.formInline.name}};
+        this.getData(para)
       },
       //根据查询到status判断，为1则显示启用，为0则禁用
       stateFormat(row) {
