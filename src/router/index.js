@@ -10,12 +10,19 @@ import User from "../views/user/User";
 import List from "../views/user/List";
 //班级管理模块组件
 import Classes from "../views/classes/Classes";
+//考试模块
 import Bank from "../views/Answer/Bank";
 import Wor from "../views/Answer/Wor";
 import Exam from "../views/Answer/Exam";
 import Paper from "../views/Answer/Paper";
 import UpdateBank from "../views/Answer/UpdateBank";
 import AddBank from "../views/Answer/AddBank";
+import AddWor from "../views/Answer/AddWor";
+import UpdateWor from "../views/Answer/UpdateWor";
+import AddExam from "../views/Answer/AddExam";
+import UpdateExam from "../views/Answer/UpdateExam";
+import AddPaper from "../views/Answer/AddPaper";
+import UpdatePaper from "../views/Answer/UpdatePaper";
 
 
 Vue.use(Router);
@@ -46,6 +53,13 @@ export default new Router({
         {path:'/Answer/Paper',component:Paper},
         {path:'/Answer/UpdateBank',component:UpdateBank},
         {path:'/Answer/AddBank',component:AddBank},
+        {path:'/Answer/AddWor',component:AddWor},
+        {path:'/Answer/UpdateWor',component:UpdateWor},
+        {path:'/Answer/AddExam',component:AddExam},
+        {path:'/Answer/UpdateExam',component:UpdateExam},
+        {path:'/Answer/Paper',component:Paper},
+        {path:'/Answer/AddPaper',component:AddPaper},
+        {path:'/Answer/UpdatePaper',component:UpdatePaper},
 
         {path:'/cls/classes',component:Classes}
       ]

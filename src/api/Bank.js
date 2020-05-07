@@ -32,3 +32,9 @@ export const updateStatus = (id,status) => {
   return axios.post("/bank/updateStatus?id="+id + "&status=" + status).then(res=>res);
 
 };
+//模糊查询
+export const findNameOrCount = (param,params) => {
+
+  return axios.post("/bank/findNameOrCount?page="+param,params).then(res=>res);
+
+};
