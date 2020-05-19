@@ -60,7 +60,7 @@
     <div id="pages" style="text-align: center" >
       <el-tag  type="" size="medium " v-text="'一共'+totals+'条'"  effect="dark"></el-tag>
       <el-button type="primary" size="small" icon="el-icon-arrow-left" @click="search1(page-1)"  v-if="page>1" >&lt;上一页</el-button>
-      <el-button type="primary" size="small" @click="search1(indexpage1)" v-for="indexpage1 in totalPage"
+      <el-button type="primary" size="small" @click="search1(indexpage1)" v-for="indexpage1 in totalPage" :key="indexpage1.id"
          v-text="indexpage1"></el-button>
       <el-button type="primary" size="small" @click="search1(page+1)" v-if="page<totalPage">下一页&gt;<i class="el-icon-arrow-right el-icon--right"></i></el-button>
     </div>

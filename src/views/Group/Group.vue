@@ -3,26 +3,15 @@
     <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>班级管理</el-breadcrumb-item>
+      <el-breadcrumb-item>小组管理</el-breadcrumb-item>
     </el-breadcrumb>
     <!--    搜索框-->
     <el-form :inline="true" :model="formInline" class="user-search">
       <el-form-item label="搜索：">
-        <el-input size="small" v-model="formInline.id"  placeholder="输入班级id"></el-input>
+        <el-input size="small" v-model="formInline.id"  placeholder="输入小组id"></el-input>
       </el-form-item>
       <el-form-item label="">
-        <el-input size="small" v-model="formInline.name" placeholder="输入班级名称"></el-input>
-      </el-form-item>
-      <el-form-item label="">
-        <el-select v-model="formInline.college" clearable placeholder="请选择" size="small">
-          <el-option
-            v-for="(item,index) in selectData"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-<!--        <el-input size="small" v-model="formInline.name" placeholder="输入班级名称"></el-input>-->
+        <el-input size="small" v-model="formInline.name" placeholder="输入小组名称"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
@@ -49,22 +38,22 @@
         fixed
         prop="id"
         label="ID"
-       >
+      >
       </el-table-column>
       <el-table-column
         prop="name"
-        label="班级名"
-        >
-      </el-table-column>
-      <el-table-column
-        prop="college.name"
-        label="所属学院"
-        >
+        label="小组名"
+      >
       </el-table-column>
       <el-table-column
         label="当前状态"
 
         :formatter="stateFormat">
+      </el-table-column>
+      <el-table-column
+        prop="remark"
+        label="备注"
+      >
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -83,21 +72,11 @@
     <!-- 编辑及新增弹窗 -->
     <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog" center>
       <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="班级名" prop="name">
-          <el-input size="small"  auto-complete="off" v-model="editForm.name" placeholder="请输入班级名称"></el-input>
+        <el-form-item label="小组名" prop="name">
+          <el-input size="small"  auto-complete="off" v-model="editForm.name" placeholder="请输入小组名称"></el-input>
         </el-form-item>
-        <el-form-item label="所属学院" prop="college">
-<!--          <el-input size="small"  auto-complete="off" v-model="editForm.college" placeholder="请输入用户密码"></el-input>-->
-          <template>
-            <el-select v-model="editForm.college" placeholder="请选择">
-              <el-option
-                v-for="(item,index) in selectData"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </template>
+        <el-form-item label="备注" prop="remark">
+          <el-input size="small"  auto-complete="off" v-model="editForm.remark" placeholder="请输入备注"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -128,12 +107,10 @@
 </template>
 
 <script>
-  // 导入请求方法的接口
-  import { findAllClass,findAllCollege,addClasses,updateClasses,banClasses,banRows } from '@/api/Classes'
   import Pagination from "../public/Pagination";
-
+  import { findAllGroup,addGroup,updateGroup,banGroup,banRows } from '@/api/Group'
   export default {
-    name: "Classes",
+    name: "Group",
     components: {Pagination},
     data() {
       return {
@@ -149,7 +126,7 @@
         editForm: {
           id: '',
           name: '',
-          college: '',
+          remark:'',
           // token: localStorage.getItem('logintoken')
         },
         //存放id的数组转换后的字符串
@@ -168,9 +145,9 @@
         //表单验证
         rules: {
           name: [
-            { required: true, message: '请输入班级名称', trigger: 'blur' }
+            { required: true, message: '请输入学院名称', trigger: 'blur' }
           ],
-          college: [{ required: true, message: '请选择所属学院', trigger: 'blur' }]
+
         },
         //返回给分页组件
         pageparm: {
@@ -180,8 +157,6 @@
         },
         //表格的内容
         tableData: [],
-        //存放添加编辑弹窗中下拉菜单的值
-        selectData:[]
       }
     },
 
@@ -190,7 +165,7 @@
      */
     created:function(){
       this.getData(this.formInline)
-      this.getColoege()
+
 
     },
     /**
@@ -202,7 +177,7 @@
 
         this.loading = true
         //分页查询
-        findAllClass(parameter)
+        findAllGroup(parameter)
           .then(res => {
             // console.log("res:"+JSON.stringify(res.data.list))
             this.loading = false
@@ -231,14 +206,6 @@
             this.$message.error('加载失败，请稍后再试！')
           })
       },
-      async getColoege() {
-        findAllCollege()
-          .then(res => {
-          if(res.status==200){
-            this.selectData=res.data
-          }
-        })
-      },
       //分页组件的点击事件，获取分页的属性
       callFather(parm) {
         this.formInline.page = parm.currentPage
@@ -260,10 +227,9 @@
       search() {
         // console.log(this.formInline.college)
         let para = {page: this.formInline.page,
-                    rows:this.formInline.rows,
-                    key:{"id":this.formInline.id,
-                         "name":this.formInline.name,
-                         "cid":this.formInline.college}};
+          rows:this.formInline.rows,
+          key:{"id":this.formInline.id,
+            "name":this.formInline.name}};
         this.getData(para)
       },
       //新增及编辑的点击事件，判断是新增还是编辑
@@ -271,17 +237,17 @@
         // console.log("这是row"+JSON.stringify(row.id))
         this.editFormVisible = true
         if (row != undefined && row != 'undefined') {
-                console.log(row.id)
-                this.title = '修改'
-                this.editForm.id = row.id
-                this.editForm.name = row.name
-                this.editForm.college = row.college.id
-              } else {
-                this.title = '添加'
-                this.editForm.id = ''
-                this.editForm.name = ''
-                this.editForm.college = ''
-              }
+          console.log(row.id)
+          this.title = '修改'
+          this.editForm.id = row.id
+          this.editForm.name = row.name
+          this.editForm.remark = row.remark
+        } else {
+          this.title = '添加'
+          this.editForm.id = ''
+          this.editForm.name = ''
+          this.editForm.remark = ''
+        }
       },
       // 新增的确定按钮
       createData () {
@@ -289,9 +255,9 @@
           if (valid) {
             this.$confirm("确认提交吗？", "提示", {}).then(() => {
               let para = {name:this.editForm.name,
-                          college:{id:this.editForm.college}}
+                remark:this.editForm.remark}
               // // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              addClasses(para).then(res => {
+              addGroup(para).then(res => {
                 console.log("succ")
                 if(res.status==200){
                   this.$message({
@@ -321,11 +287,11 @@
           if (valid) {
             this.$confirm("确认修改吗?", "提示", {}).then(() => {
               let para = {id: this.editForm.id,
-                          name:this.editForm.name,
-                          college:{id:this.editForm.college}};
+                name:this.editForm.name,
+                remark:this.editForm.remark};
               console.log(para)
               // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              updateClasses(para).then(res => {
+              updateGroup(para).then(res => {
                 console.log(JSON.stringify(res))
                 if(res.status==200){
                   this.$message({
@@ -373,8 +339,8 @@
           type: "warning"
         }).then(() => {
           let para = {id: row.id,
-                      status:row.status===0?1:0};
-          banClasses(para).then(res => {
+            status:row.status===0?1:0};
+          banGroup(para).then(res => {
             if (res > 0) {
               this.$message({
                 message: "操作成功",
@@ -421,13 +387,13 @@
       exportExcel() {
         require.ensure([], () => {
           const { export_json_to_excel } = require('@/Excel/Export2Excel');
-          const tHeader = ['ID', '班级名称', '所属学院','当前状态'];
+          const tHeader = ['ID', '小组名称', '备注','当前状态'];
           // 上面设置Excel的表格第一行的标题
-          const filterVal = ['id', 'name', 'college.id','status'];
+          const filterVal = ['id', 'name', 'remark','status'];
           // 上面的index、nickName、name是tableData里对象的属性
           const list = this.tableData;  //把data里的tableData存到list
           const data = this.formatJson(filterVal, list);
-          export_json_to_excel(tHeader, data, '列表excel');
+          export_json_to_excel(tHeader, data, '小组列表excel');
         })
       },
 
@@ -435,6 +401,7 @@
         return jsonData.map(v => filterVal.map(j => v[j]))
       }
     },
+
 
 
   }

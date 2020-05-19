@@ -47,17 +47,17 @@
         <el-menu-item index="2-2">
           <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
           <i class="el-icon-menu"></i>
-          <router-link to="">学院管理</router-link>
+          <router-link to="/coll/college">学院管理</router-link>
         </el-menu-item>
         <el-menu-item index="2-3">
           <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
           <i class="el-icon-menu"></i>
-          <router-link to="">小组管理</router-link>
+          <router-link to="/gro/group">小组管理</router-link>
         </el-menu-item>
         <el-menu-item index="2-4">
           <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
           <i class="el-icon-menu"></i>
-          <router-link to="">职称管理</router-link>
+          <router-link to="/pos/position">职称管理</router-link>
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
@@ -102,6 +102,22 @@
       <i class="el-icon-setting"></i>
       <span slot="title">日周报管理</span>
       </template>
+    </el-submenu>
+    <el-submenu index="7">
+      <template slot="title">
+        <i class="el-icon-setting"></i>
+        <span slot="title">答疑管理</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="7-1">
+          <i class="el-icon-menu"></i>
+          <router-link to="/ques/question">问题管理</router-link>
+        </el-menu-item>
+        <el-menu-item index="7-2">
+          <i class="el-icon-menu"></i>
+          <router-link to="/ques/answer">回答管理</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
     </el-submenu>
   </el-menu>
 

@@ -10,6 +10,12 @@ import User from "../views/user/User";
 import List from "../views/user/List";
 //班级管理模块组件
 import Classes from "../views/classes/Classes";
+import College from "../views/college/College";
+import Group from "../views/Group/Group";
+import Position from "../views/position/Position";
+
+import Question from "../views/questions/Question";
+import Answer from "../views/questions/Answer";
 //考试模块
 import Bank from "../views/Answer/Bank";
 import Wor from "../views/Answer/Wor";
@@ -60,8 +66,12 @@ export default new Router({
         {path:'/Answer/Paper',component:Paper},
         {path:'/Answer/AddPaper',component:AddPaper},
         {path:'/Answer/UpdatePaper',component:UpdatePaper},
-
-        {path:'/cls/classes',component:Classes}
+        {path:'/coll/college',component:College},
+        {path:'/cls/classes',component:Classes},
+        {path:'/gro/group',component:Group},
+        {path:'/pos/position',component:Position},
+        {path:'/ques/question',component:Question},
+        {path:'/ques/answer',component:Answer}
       ]
     },
     //重定向

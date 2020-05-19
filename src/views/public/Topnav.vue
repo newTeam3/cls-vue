@@ -13,7 +13,7 @@
       <!-- <template slot="title">{{user.userRealName}}</template> -->
       <template slot="title">
         <i class="el-icon-user-solid"></i>
-        <span>{{userData.username}}</span>
+        <span>{{userData.name}}</span>
       </template>
       <el-menu-item index="2-1">设置</el-menu-item>
       <el-menu-item index="2-2" @click="logout">退出</el-menu-item>
@@ -43,11 +43,13 @@
           window.sessionStorage.clear()
           this.$router.push("/login")
         },
-        getData(){
+        async  getData(){
         userData()
         .then(res => {
           console.log("res:"+JSON.stringify(res.data))
           if(res.status==200){
+             let par= JSON.stringify(res.data)
+              sessionStorage.setItem('user',par)
               this.userData=res.data
           }
           // this.loading = false
