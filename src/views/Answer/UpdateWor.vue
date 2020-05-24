@@ -83,12 +83,22 @@
             // alert('submit!');
             update(this.ruleForm).then(res=>{
               // console.log(res.data)
-              this.$alert('修改成功,点击跳转到首页', '消息', {
-                confirmButtonText: '确定',
-                callback: action => {
-                  this.$router.push("/Answer/Wor");
-                }
-              })
+
+              if (res.data == 'fail1') {
+                this.$alert('题库中没用该题库名,点击重新输入题库名！', '消息', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    location.reload();
+                  }
+                })
+              } else {
+                this.$alert('修改成功,点击跳转到首页', '消息', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    this.$router.push("/Answer/Wor");
+                  }
+                })
+              }
             })
           } else {
             console.log('error submit!!');

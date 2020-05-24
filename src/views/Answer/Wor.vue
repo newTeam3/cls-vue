@@ -1,12 +1,12 @@
 <template>
   <div>
     <!--    搜索框-->
-    <el-form :inline="true"  class="user-search">
+    <el-form :inline="true" class="user-search">
       <el-form-item label="搜索:">
-        <el-input size="small"   v-model="wor.question"   placeholder="输入题目内容"></el-input>
+        <el-input size="small" v-model="wor.question" placeholder="输入题目内容"></el-input>
       </el-form-item>
       <el-form-item label="">
-        <el-input size="small"  v-model="wor.name"  placeholder="输入题库名称"></el-input>
+        <el-input size="small" v-model="wor.name" placeholder="输入题库名称"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search1">搜索</el-button>
@@ -15,6 +15,8 @@
     </el-form>
     <el-table
       :data="worS.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+      highlight-current-row v-loading="loading"
+      border element-loading-text="拼命加载中"
       style="width: 100% ">
       <el-table-column
         label="单选，多选"
@@ -82,18 +84,28 @@
         </template>
       </el-table-column>
     </el-table>
-    <div id="pages" style="text-align: center">
-      <el-tag  type="" size="medium " v-text="'一共'+totals+'条'"    effect="dark"></el-tag>
-      <el-button type="primary" size="small" icon="el-icon-arrow-left"@click="search1(page-1)" v-if="page>1" >&lt;上一页</el-button>
-      <el-button type="primary" size="small" @click="search1(indexpage1)" v-for="indexpage1 in totalPage" :key="indexpage1.id"
-                 v-text="indexpage1"></el-button>
-      <el-button type="primary" size="small" @click="search1(page+1)" v-if="page<totalPage">下一页&gt;<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-    </div>
+    <el-row>
+      <el-col :span="10" :offset="9">
+        <el-pagination
+          background
+          layout="total,prev, pager, next, jumper, sizes"
+          prev-text="上一页"
+          next-text="下一页"
+          :current-page="page"
+          :page-size="size"
+          :page-sizes="[2, 4, 6, 8,10]"
+          @current-change="findPage"
+          @size-change="handleSizeChange"
+          :total="totals">
+        </el-pagination>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-  import {findAllBank,updateStatus,findQuestionOrName}  from '@/api/Wor'
+  import {findQuestionOrName, updateStatus} from '@/api/Wor'
+
   export default {
     name: "Wor",
     data() {
@@ -102,40 +114,50 @@
           questions: '多选',
           question: '题目内容',
           answer: 'D',
-          name:'C语言',
-          status:'启动',
-          optionA:'A',
-          optionB:'B',
-          optionC:'C',
-          optionD:'D',
+          name: 'C语言',
+          status: '启动',
+          optionA: 'A',
+          optionB: 'B',
+          optionC: 'C',
+          optionD: 'D',
         }, {
           questions: '多选',
           question: '题目内容',
           answer: 'D',
-          name:'C语言',
-          status:'启动'
+          name: 'C语言',
+          status: '启动'
         }, {
           questions: '多选',
           question: '题目内容',
           answer: 'D',
-          name:'C语言',
-          status:'启动'
+          name: 'C语言',
+          status: '启动'
         }],
         page: 1,
         rows: 4,
+        size:4,
         totalPage: 0,
         totals: 0,
         search: '',
-        wor:{
+        wor: {
           question: '',
-          name:''
+          name: ''
         },
+        loading: false,
       }
     },
     methods: {
-      AddBank(){
+      handleSizeChange(size){
+        this.size = size;
+        this.search1(this.page,size);
+      },
+      findPage(page) {
+        this.page = page;
+        this.search1(page,this.size)
+      },
+      AddBank() {
         this.$router.push({
-          path:'/Answer/AddWor',
+          path: '/Answer/AddWor',
         });
       },
       ViewDetails(index, row) {
@@ -143,32 +165,22 @@
       },
       handleEdit(index, row) {
         this.$router.push({
-          path:'/Answer/UpdateWor',
-          query:{
-            id:row.id
+          path: '/Answer/UpdateWor',
+          query: {
+            id: row.id
           }
         });
       },
       handleDelete(index, row) {
+
         // console.log(index.status);
         // console.log(index.id);
-        updateStatus(index.id,index.status).then(res=>{
+        updateStatus(index.id, index.status).then(res => {
+
           // console.log(res.data)
-          location. reload()
+          location.reload()
         })
 
-      },
-      findAll(indexpage) {
-        if (indexpage) {
-          this.page = indexpage;
-        }
-        findAllBank(this.page).then(res => {
-          // console.log(res.data);
-          this.worS=res.data.wors;
-          this.page = res.data.page;
-          this.totalPage = res.data.totalPage;
-          this.totals = res.data.totals;
-        });
       },
       //根据查询到status判断，为1则显示启用，为0则禁用
       stateFormat(row) {
@@ -178,16 +190,14 @@
           return "禁用";
         }
       },
-      search1(indexpage1){
+      search1(page) {
+        this.loading = true;
         // console.log(this.bank)
-
-        if (indexpage1.isTrusted==true) {
-          indexpage1=1;
-        }
-        this.page = indexpage1;
+        // this.page = indexpage1;
         // console.log(this.wor);
-        findQuestionOrName(this.page,this.wor).then(res => {
-          console.log(res.data)
+        findQuestionOrName(this.page,this.size,this.wor).then(res => {
+          this.loading = false;
+          console.log(res.data);
           this.worS = res.data.wors;
           this.page = res.data.page;
           this.totalPage = res.data.totalPage;
@@ -196,7 +206,7 @@
       }
     },
     created() {
-   this.findAll()
+      this.search1()
     }
   }
 </script>

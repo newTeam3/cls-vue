@@ -6,8 +6,8 @@
     <el-form-item label="姓名" prop="username">
       <el-input v-model="ruleForm.username" ></el-input>
     </el-form-item>
-    <el-form-item label="题库名称" prop="name">
-      <el-input v-model="ruleForm.name" ></el-input>
+    <el-form-item label="题库名称" prop="paperName">
+      <el-input v-model="ruleForm.paperName" ></el-input>
     </el-form-item>
     <el-form-item label="分数" prop="score">
       <el-input v-model="ruleForm.score"></el-input>
@@ -25,19 +25,18 @@
         ruleForm: {
           id: '',
           username: '',
-          name: '',
+          paperName: '',
           score: '',
         },
         rules: {
           username: [
             { required: true, message: '姓名', trigger: 'blur' },
           ],
-          name: [
+          paperName: [
             { required: true, message: '请输入题库名称', trigger: 'blur' },
           ],
           score: [
             { required: true, message: '分数', trigger: 'blur' },
-            { min: 0, max: 100, message: '分数在 0 到 100之间 ', trigger: 'blur' }
           ],
         }
       };
@@ -57,7 +56,7 @@
               })
             })
           } else {
-            console.log('error submit!!');
+            // console.log('error submit!!');
             return false;
           }
         });
@@ -68,7 +67,7 @@
     },
     created() {
       findOne(this.$route.query.id) .then(res => {
-        // console.log(res.data);
+        console.log(res.data);
         this.ruleForm=res.data;
       })
     }

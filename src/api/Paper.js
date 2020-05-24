@@ -27,8 +27,8 @@ export const updateStatus = (id,status) => {
 
 };
 //模糊查询
-export const findByNameOrScore = (param,params) => {
+export const findByNameOrScore = (param,param1,params) => {
 
-  return axios.post("/paper/findByNameOrScore?page="+param,params).then(res=>res);
+  return axios.post("/paper/findByNameOrScore?page="+param+"&size="+param1,params).then(res=>res);
 
 };

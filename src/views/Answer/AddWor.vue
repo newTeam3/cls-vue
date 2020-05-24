@@ -90,7 +90,14 @@
                     location.reload();
                   }
                 })
-              }else {
+              }else if (res.data=='fail_fail'){
+                this.$alert('题库中没用该题库名,点击重新输入题库名！', '消息', {
+                  confirmButtonText: '确定',
+                  callback: action => {
+                    location.reload();
+                  }
+                })
+              } else {
                 this.$alert('添加成功,点击跳转到首页', '消息', {
                   confirmButtonText: '确定',
                   callback: action => {

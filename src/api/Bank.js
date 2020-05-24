@@ -33,8 +33,8 @@ export const updateStatus = (id,status) => {
 
 };
 //模糊查询
-export const findNameOrCount = (param,params) => {
+export const findNameOrCount = (param,param1,params) => {
 
-  return axios.post("/bank/findNameOrCount?page="+param,params).then(res=>res);
+  return axios.post("/bank/findNameOrCount?page="+param+"&size="+param1,params).then(res=>res);
 
 };

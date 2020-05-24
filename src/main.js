@@ -17,8 +17,8 @@ Vue.use(ElementUI);
 Vue.prototype.$axios=axios
 axios.defaults.baseURL="http://localhost:8080"
 axios.interceptors.request.use(config=>{
-  config.headers.Authorization="Bearer "+store.state.token
-  console.log(config)
+  config.headers.Authorization="Bearer "+store.state.token;
+  console.log(config);
   return config
 })
 /* eslint-disable no-new */

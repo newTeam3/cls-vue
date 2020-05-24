@@ -27,8 +27,8 @@ export const updateStatus = (id,status) => {
 
 };
 //模糊查询
-export const findQuestionOrName = (param,params) => {
+export const findQuestionOrName = (param,param1,params) => {
 
-  return axios.post("/wor/findQuestionOrName?page="+param,params).then(res=>res);
+  return axios.post("/wor/findQuestionOrName?page="+param+"&size="+param1,params).then(res=>res);
 
 };

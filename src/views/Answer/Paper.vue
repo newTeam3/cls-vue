@@ -15,14 +15,26 @@
     </el-form>
     <el-table
       :data="papers.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+      highlight-current-row v-loading="loading"
+      border element-loading-text="拼命加载中"
       style="width: 100%">
       <el-table-column
-        label="分数"
-        prop="score"
-        v-model="papers.score">
+        label="试卷名称"
+        prop="paperName"
+        v-model="papers.paperName">
       </el-table-column>
       <el-table-column
-        label="时间"
+        label="题库组成编号"
+        prop="paperNum"
+        v-model="papers.paperNum">
+      </el-table-column>
+      <el-table-column
+        label="分数"
+        prop="totalScore"
+        v-model="papers.totalScore">
+      </el-table-column>
+      <el-table-column
+        label="考试时间"
         prop="time"
         v-model="papers.time">
       </el-table-column>
@@ -36,7 +48,7 @@
         :formatter="stateFormat">
       </el-table-column>
       <el-table-column
-        align="left">
+        align="left" width="220px">
         <template slot="header" slot-scope="scope">
           <div align="center">操作</div>
         </template>
@@ -57,50 +69,75 @@
         </template>
       </el-table-column>
     </el-table>
-    <div id="pages" style="text-align: center" >
-      <el-tag  type="" size="medium " v-text="'一共'+totals+'条'"  effect="dark"></el-tag>
-      <el-button type="primary" size="small" icon="el-icon-arrow-left" @click="search1(page-1)"  v-if="page>1" >&lt;上一页</el-button>
-      <el-button type="primary" size="small" @click="search1(indexpage1)" v-for="indexpage1 in totalPage" :key="indexpage1.id"
-                 v-text="indexpage1"></el-button>
-      <el-button type="primary" size="small" @click="search1(page+1)" v-if="page<totalPage">下一页&gt;<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-    </div>
+    <el-row>
+      <el-col :span="10" :offset="9">
+        <el-pagination
+          background
+          layout="total,prev, pager, next, jumper, sizes"
+          prev-text="上一页"
+          next-text="下一页"
+          :current-page="page"
+          :page-size="size"
+          :page-sizes="[2, 4, 6, 8,10]"
+          @current-change="findPage"
+          @size-change="handleSizeChange"
+          :total="totals">
+        </el-pagination>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-  import {findAllPaper,updateStatus,findByNameOrScore}  from '@/api/Paper'
+  import {updateStatus,findByNameOrScore}  from '@/api/Paper'
   export default {
     name: "Paper",
     data() {
       return {
         papers: [{
-          score: '100',
+          totalScore: '100',
           time: '40',
           name: 'C语言',
-          status:'状态'
+          status:'状态',
+          paperNum:'1,2',
+          paperName:'c1111'
         },{
-          score: '100',
+          totalScore: '100',
           time: '40',
           name: 'C语言',
-          status:'状态'
+          status:'状态',
+          paperNum:'1,2',
+          paperName:'c1111'
         }, {
-          score: '100',
+          totalScore: '100',
           time: '40',
           name: 'C语言',
-          status:'状态'
+          status:'状态',
+          paperNum:'1,2',
+          paperName:'c1111'
         }],
         page: 1,
         rows: 4,
+        size:4,
         totalPage: 0,
         totals: 0,
         search: '',
         paper:{
           score:'',
           time:''
-        }
+        },
+        loading: false,
       }
     },
     methods: {
+      handleSizeChange(size){
+        this.size = size;
+        this.search1(this.page,size);
+      },
+      findPage(page){
+        this.page=page;
+        this.search1(page,this.size)
+      },
       AddBank() {
         this.$router.push({
           path: '/Answer/AddPaper',
@@ -123,19 +160,6 @@
         })
 
       },
-      findAll(indexpage) {
-        if (indexpage) {
-          this.page = indexpage;
-        }
-        findAllPaper(this.page).then(res =>{
-          console.log(res.data);
-          this.papers = res.data.papers;
-          this.page = res.data.page;
-          this.totalPage = res.data.totalPage;
-          this.totals = res.data.totals;
-
-        })
-      },
       //根据查询到status判断，为1则显示启用，为0则禁用
       stateFormat(row) {
         if (row.status === 1) {
@@ -144,14 +168,10 @@
           return "禁用";
         }
       },
-      search1(indexpage1){
-        // console.log(this.bank)
-
-        if (indexpage1.isTrusted==true) {
-          indexpage1=1;
-        }
-        this.page = indexpage1;
-        findByNameOrScore(this.page,this.paper).then(res => {
+      search1(page){
+        this.loading = true;
+        findByNameOrScore(this.page,this.size,this.paper).then(res => {
+          this.loading = false;
           // console.log(res.data)
           this.papers = res.data.papers;
           this.page = res.data.page;
@@ -162,7 +182,7 @@
     },
 
     created() {
-      this.findAll();
+      this.search1();
     }
   }
 </script>
