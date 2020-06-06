@@ -3,19 +3,35 @@
     <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>问题管理</el-breadcrumb-item>
+      <el-breadcrumb-item>周报管理</el-breadcrumb-item>
     </el-breadcrumb>
     <!--    搜索框-->
     <el-form :inline="true" :model="formInline" class="user-search">
       <el-form-item label="搜索：">
-        <el-input size="small" v-model="formInline.title"  placeholder="输入问题标题"></el-input>
+        <el-select v-model="formInline.state" clearable placeholder="请选择批阅状态" size="small">
+          <el-option
+            label="未批阅"
+            :value="0">
+          </el-option>
+          <el-option
+            label="已批阅"
+            :value="1">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="">
-        <el-input size="small" v-model="formInline.name" placeholder="输入提问者姓名"></el-input>
+        <el-select v-model="formInline.id" clearable placeholder="请选择报告任务" size="small">
+          <el-option
+            v-for="item in selectContent"
+            :key="item.id"
+            :label="item.content"
+            :value="item.id">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-<!--        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()" >添加</el-button>-->
+        <!--        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()" >添加</el-button>-->
         <el-button size="small" type="danger" icon="el-icon-delete" @click="delsels" :disabled="this.delarr.length===0">批量禁用</el-button>
         <el-button size="small" type="warning" icon="el-icon-download" @click="exportExcel" >导出</el-button>
       </el-form-item>
@@ -42,55 +58,76 @@
       >
       </el-table-column>
       <el-table-column
-        prop="title"
-        label="标题"
-        width="200"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="content"
-        label="内容"
-        width="200"
+        prop="userVO.name"
+        label="姓名"
+        width="120"
       >
       </el-table-column>
       <el-table-column
         prop="time"
         label="时间"
+        width="200"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="work"
+        label="本周工作内容"
+        width="200"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="problem"
+        label="遇到的困难"
         width="160"
       >
       </el-table-column>
       <el-table-column
-        prop="userVO.name"
-        label="提问人"
-        width="120"
+        prop="solve"
+        label="解决办法"
+        width="160"
       >
       </el-table-column>
       <el-table-column
-        prop="quanity"
-        label="阅读量"
-        width="120"
+        prop="summary"
+        label="本周总结"
+        width="160"
       >
       </el-table-column>
       <el-table-column
-        label="有无回答"
-        width="120"
+        prop="plan"
+        label="下周计划"
+        width="160"
+      >
+      </el-table-column>
 
-        :formatter="stateFormat">
+      <el-table-column
+        prop="task.content"
+        label="所属任务"
+        width="120"
+      >
       </el-table-column>
       <el-table-column
-        label="当前状态"
+        label="是否批阅"
         width="120"
 
         :formatter="stateFormat2">
       </el-table-column>
+
+      <el-table-column
+        label="当前状态"
+        width="120"
+
+        :formatter="stateFormat">
+      </el-table-column>
+
       <el-table-column
         fixed="right"
         label="操作"
         width="230">
         <template slot-scope="scope">
-          <el-button @click="handleEdit2(scope.$index, scope.row)" type="primary" size="small">回答</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.state===0">禁用</el-button>
-          <el-button type="success" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.state===1">启用</el-button>
+          <el-button @click="handleEdit2(scope.$index, scope.row)" type="primary" size="small">评阅</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.status===0">禁用</el-button>
+          <el-button type="success" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.status===1">启用</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -100,15 +137,15 @@
     <el-dialog title="查看" :visible.sync="editFormVisible2" width="50%" @click="closeDialog" center>
       <el-form label-width="120px" :model="editForm" :rules="rules2" ref="editForm">
         <div class="li-for">
-        <template>
-          <ul class="infinite-list"  style="overflow:auto;height: 300px">
-            <li  class="infinite-list-item" v-for="i in answerData">
-              <span>{{i.time}}</span>
+          <template>
+            <ul class="infinite-list"  style="overflow:auto;height: 100px">
+              <li  class="infinite-list-item" v-for="i in answerData">
+                <span>{{i.time}}</span>
                 <span>{{i.userVO.name}}&nbsp;&nbsp;:</span>
-              <span>{{ i.content}}</span>
-            </li>
-          </ul>
-        </template>
+                <span>{{ i.content}}</span>
+              </li>
+            </ul>
+          </template>
         </div>
         <el-form-item label="回复内容" prop="content">
 
@@ -143,10 +180,11 @@
 
 <script>
   import Pagination from "../public/Pagination";
-  import { findAllQuestion,reply,findAnswerByQid,banQuestion,banRows } from '@/api/Questions'
+  import { findAllWeekReport,evaluate,banMessage,banMessageRows,findEvaluateByMid,getContentAll} from '@/api/Message'
+
 
   export default {
-    name: "Question",
+    name: "DayReport",
     components: {Pagination},
     data() {
       return {
@@ -165,6 +203,7 @@
           name: '',
           title:'',
           content:'',
+          state:'',
           // token: localStorage.getItem('logintoken')
         },
         //存放id的数组转换后的字符串
@@ -201,6 +240,7 @@
         //表格的内容
         tableData: [],
         answerData: [],
+        selectContent:[],
       }
     },
 
@@ -209,6 +249,8 @@
      */
     created:function(){
       this.getData(this.formInline)
+      let para = {"sort":1};
+      this.getAllContent(para)
 
     },
     /**
@@ -220,7 +262,7 @@
 
         this.loading = true
         //分页查询
-        findAllQuestion(parameter)
+        findAllWeekReport(parameter)
           .then(res => {
             // console.log("res:"+JSON.stringify(res.data.list))
             this.loading = false
@@ -249,47 +291,57 @@
             this.$message.error('加载失败，请稍后再试！')
           })
       },
+
+      async getAllContent(params) {
+        getContentAll(params)
+          .then(res => {
+            if(res.status==200){
+              this.selectContent=res.data
+            }
+          })
+      },
       //分页组件的点击事件，获取分页的属性
       callFather(parm) {
         this.formInline.page = parm.currentPage
         this.formInline.rows = parm.pageSize
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{"name":this.formInline.name,
-                "title":this.formInline.title}};
+          key:{"id":this.formInline.id,
+            "state":this.formInline.state}};
         this.getData(para)
       },
       //根据查询到status判断，为1则显示启用，为0则禁用
       stateFormat(row) {
         if (row.status === 1) {
-          return "已有回答";
+          return "正常";
         } else {
-          return "暂无回答";
+          return "屏蔽";
         }
       },
       stateFormat2(row) {
-        if(row.state===1){
-          return "正常";
-        }else{
-          return "禁用";
+        if (row.state === 1) {
+          return "已批阅";
+        } else {
+          return "未批阅";
         }
       },
+
       //模糊查询
       search() {
-        // console.log(this.formInline.college)
+        console.log(this.formInline.state)
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{"name":this.formInline.name,
-            "title":this.formInline.title}};
+          key:{"id":this.formInline.id,
+            "state":this.formInline.state}};
         this.getData(para)
       },
       //根据qid查询回答
-      findAnswer(params){
-        findAnswerByQid(params).then(res => {
+      findEvaluate(params){
+        findEvaluateByMid(params).then(res => {
           if(res.status==200){
-          this.loading = false
-          this.answerData=res.data
-            this.getData(this.formInline)
+            this.loading = false
+            this.answerData=res.data
+            console.log(JSON.stringify(this.answerData))
           }
         })
       },
@@ -301,8 +353,8 @@
         var userId = JSON.parse(sessionStorage.getItem("user"));
         this.editForm.uid = userId.id
         this.editForm.content = ''
-        let para = {qid: row.id};
-        this.findAnswer(para)
+        let para = {mid: row.id};
+        this.findEvaluate(para)
       },
       // 回复的确定按钮
       updateData () {
@@ -310,11 +362,11 @@
           if (valid) {
             this.$confirm("确认提交吗?", "提示", {}).then(() => {
               let para = {userVO:{id:this.editForm.uid},
-                question:{id:this.editForm.id},
+                message:{id:this.editForm.id},
                 content:this.editForm.content};
               console.log(para)
               // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              reply(para).then(res => {
+              evaluate(para).then(res => {
                 console.log(JSON.stringify(res))
                 if(res.status==200){
                   this.$message({
@@ -325,8 +377,8 @@
                   this.editFormVisible = false;
                   // this.getData(this.formInline);
                   console.log("ni"+this.editForm.id)
-                  let para = {qid: this.editForm.id};
-                  this.findAnswer(para)
+                  let para = {mid: this.editForm.id};
+                  this.findEvaluate(para)
                   this.getData(this.formInline)
                   console.log("success")
                 }else{
@@ -358,16 +410,16 @@
       handleDelete(index, row) {
         let i = ""
         if (row.state === 0) {
-          i = "确认启用该用户吗?"
+          i = "确认启用该日报吗?"
         } else if (row.state === 1) {
-          i = "确认禁用该用户吗?"
+          i = "确认禁用该日报吗?"
         }
         this.$confirm(i, "提示", {
           type: "warning"
         }).then(() => {
           let para = {id: row.id,
-            state:row.state===0?1:0};
-          banQuestion(para).then(res => {
+            status:row.status===0?1:0};
+          banMessage(para).then(res => {
             if (res > 0) {
               this.$message({
                 message: "操作成功",
@@ -382,7 +434,7 @@
       },
       //判断用户的status,如果已被禁用，则该条记录的复选框不能选中
       checkbox(row, index) {
-        if (row.state == 0) {
+        if (row.status == 0) {
           return 0;
         } else {
           return 1;
@@ -396,7 +448,7 @@
       //批量删除弹窗点击确定按钮的点击事件
       deleteAll() {
         let para = {"ids": this.logIds};
-        banRows(para)
+        banMessageRows(para)
           .then(res => {
             this.loading = false
             if (res.status==200) {
@@ -414,14 +466,14 @@
       exportExcel() {
         require.ensure([], () => {
           const { export_json_to_excel } = require('@/Excel/Export2Excel');
-          const tHeader = ['ID', '标题', '内容','时间','提问人','阅读量','有无回答','当前状态'];
+          const tHeader = ['ID', '姓名', '时间','本周工作内容','遇到的困难','解决办法','本周总结','下周计划','所属任务','当前状态'];
 
           // 上面设置Excel的表格第一行的标题
-          const filterVal = ['id', 'title', 'content','time','userVO','quanity','status','state'];
+          const filterVal = ['id', 'userVO', 'time','work','problem','solve','summary','plan','task','status'];
           // 上面的index、nickName、name是tableData里对象的属性
           const list = this.tableData;  //把data里的tableData存到list
           const data = this.formatJson(filterVal, list);
-          export_json_to_excel(tHeader, data, '问题列表excel');
+          export_json_to_excel(tHeader, data, '日报列表excel');
         })
       },
 

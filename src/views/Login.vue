@@ -68,7 +68,7 @@
                 });
                 this.$store.commit("login",res.data.token)
                 console.log("success")
-                this.$router.push("/index")
+                this.$router.push("/echarts/echarts")
               }else{
                 this.$message({
                   message: "登录失败",

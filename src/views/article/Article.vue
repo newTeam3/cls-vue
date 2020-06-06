@@ -3,19 +3,26 @@
     <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>问题管理</el-breadcrumb-item>
+      <el-breadcrumb-item>文章管理</el-breadcrumb-item>
     </el-breadcrumb>
     <!--    搜索框-->
     <el-form :inline="true" :model="formInline" class="user-search">
       <el-form-item label="搜索：">
-        <el-input size="small" v-model="formInline.title"  placeholder="输入问题标题"></el-input>
+        <el-input size="small" v-model="formInline.title"  placeholder="输入文章标题"></el-input>
       </el-form-item>
       <el-form-item label="">
-        <el-input size="small" v-model="formInline.name" placeholder="输入提问者姓名"></el-input>
+        <el-select v-model="formInline.sid" clearable placeholder="请选择文章分类" size="small">
+          <el-option
+            v-for="(item,index) in selectData"
+            :key="item.id"
+            :label="item.sortName"
+            :value="item.id">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-<!--        <el-button size="small" type="primary" icon="el-icon-plus" @click="handleEdit()" >添加</el-button>-->
+        <el-button size="small" type="primary" icon="el-icon-plus"><router-link :to="{ path: '/article/add'}">发布文章</router-link></el-button>
         <el-button size="small" type="danger" icon="el-icon-delete" @click="delsels" :disabled="this.delarr.length===0">批量禁用</el-button>
         <el-button size="small" type="warning" icon="el-icon-download" @click="exportExcel" >导出</el-button>
       </el-form-item>
@@ -38,97 +45,51 @@
         fixed
         prop="id"
         label="ID"
-        width="120"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="sortName"
+        label="文章分类"
       >
       </el-table-column>
       <el-table-column
         prop="title"
         label="标题"
-        width="200"
       >
       </el-table-column>
       <el-table-column
-        prop="content"
-        label="内容"
-        width="200"
+        prop="name"
+        label="作者"
       >
       </el-table-column>
       <el-table-column
-        prop="time"
-        label="时间"
-        width="160"
+        prop="createTime"
+        label="发布时间"
       >
       </el-table-column>
       <el-table-column
-        prop="userVO.name"
-        label="提问人"
-        width="120"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="quanity"
+        prop="quantity"
         label="阅读量"
-        width="120"
       >
-      </el-table-column>
-      <el-table-column
-        label="有无回答"
-        width="120"
-
-        :formatter="stateFormat">
       </el-table-column>
       <el-table-column
         label="当前状态"
-        width="120"
 
-        :formatter="stateFormat2">
+        :formatter="stateFormat">
       </el-table-column>
       <el-table-column
         fixed="right"
         label="操作"
         width="230">
         <template slot-scope="scope">
-          <el-button @click="handleEdit2(scope.$index, scope.row)" type="primary" size="small">回答</el-button>
-          <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.state===0">禁用</el-button>
-          <el-button type="success" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.state===1">启用</el-button>
+          <el-button type="primary" size="small"><router-link :to="{ name: 'ArticleItem',params:{id:scope.row.id}}">查看</router-link></el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.status===0">禁用</el-button>
+          <el-button type="success" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.status===1">启用</el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页组件 -->
     <Pagination v-bind:child-msg="pageparm" @callFather="callFather"></Pagination>
-
-    <el-dialog title="查看" :visible.sync="editFormVisible2" width="50%" @click="closeDialog" center>
-      <el-form label-width="120px" :model="editForm" :rules="rules2" ref="editForm">
-        <div class="li-for">
-        <template>
-          <ul class="infinite-list"  style="overflow:auto;height: 300px">
-            <li  class="infinite-list-item" v-for="i in answerData">
-              <span>{{i.time}}</span>
-                <span>{{i.userVO.name}}&nbsp;&nbsp;:</span>
-              <span>{{ i.content}}</span>
-            </li>
-          </ul>
-        </template>
-        </div>
-        <el-form-item label="回复内容" prop="content">
-
-          <el-input
-            type="textarea"
-            autosize
-            placeholder="请输入内容"
-            v-model="editForm.content">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="closeDialog">取消</el-button>
-        <el-button size="small"
-                   type="primary"
-                   :loading="loading"
-                   class="title"
-                   @click="updateData">提交</el-button>
-      </div>
-    </el-dialog>
 
     <!--    批量禁用弹窗-->
     <el-dialog title="批量禁用" :visible.sync="delVisible" width="30%" @click="closeDialog" center>
@@ -142,18 +103,19 @@
 </template>
 
 <script>
+  // 导入请求方法的接口
+  import { findAllArticle,addArticle,updateArticle,banArticle,banArticleRows,getSort } from '@/api/Article'
   import Pagination from "../public/Pagination";
-  import { findAllQuestion,reply,findAnswerByQid,banQuestion,banRows } from '@/api/Questions'
 
   export default {
-    name: "Question",
+    name: "Article",
     components: {Pagination},
     data() {
       return {
         //新增及编辑弹窗的标题
         title: '添加',
-        //查看弹窗是否显示
-        editFormVisible2:false,
+        //新增及编辑弹窗是否显示
+        editFormVisible: false,
         //批量禁用弹窗是否显示
         delVisible:false,
         //数据加载前loading的动画是否显示
@@ -161,10 +123,8 @@
         //新增及编辑弹窗form表单的值
         editForm: {
           id: '',
-          uid:'',
-          name: '',
-          title:'',
-          content:'',
+          sid: '',
+          title: '',
           // token: localStorage.getItem('logintoken')
         },
         //存放id的数组转换后的字符串
@@ -182,14 +142,8 @@
         },
         //表单验证
         rules: {
-          content: [
-            { required: true, message: '请输入回复内容', trigger: 'blur' }
-          ],
-
-        },
-        rules2: {
-          content: [
-            {required: true, message: '请输入回复内容', trigger: 'blur'}
+          sortName: [
+            { required: true, message: '请输入文章分类名', trigger: 'blur' }
           ],
         },
         //返回给分页组件
@@ -200,7 +154,8 @@
         },
         //表格的内容
         tableData: [],
-        answerData: [],
+        //存放添加编辑弹窗中下拉菜单的值
+        selectData:[]
       }
     },
 
@@ -209,23 +164,23 @@
      */
     created:function(){
       this.getData(this.formInline)
-
+      this.getSortAll()
     },
     /**
      * 里面的方法只有被调用才会执行
      */
     methods: {
       //将分页参数及查询条件发送到后端，获取查询内容
-      async getData(parameter){
+      async getData(parameter) {
 
         this.loading = true
         //分页查询
-        findAllQuestion(parameter)
+        findAllArticle(parameter)
           .then(res => {
             // console.log("res:"+JSON.stringify(res.data.list))
             this.loading = false
             if (res.status!=200) {
-              console.log("呼呼"+JSON.stringify(res.data))
+
               this.$message({
                 type: 'error',
                 message: "查询失败"
@@ -249,104 +204,46 @@
             this.$message.error('加载失败，请稍后再试！')
           })
       },
+
+      async getSortAll() {
+        getSort()
+          .then(res => {
+            if(res.status==200){
+              this.selectData=res.data
+            }
+          })
+      },
       //分页组件的点击事件，获取分页的属性
       callFather(parm) {
         this.formInline.page = parm.currentPage
         this.formInline.rows = parm.pageSize
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{"name":this.formInline.name,
-                "title":this.formInline.title}};
+          key:{title:this.formInline.title}};
         this.getData(para)
       },
       //根据查询到status判断，为1则显示启用，为0则禁用
       stateFormat(row) {
         if (row.status === 1) {
-          return "已有回答";
+          return "启用";
         } else {
-          return "暂无回答";
-        }
-      },
-      stateFormat2(row) {
-        if(row.state===1){
-          return "正常";
-        }else{
           return "禁用";
         }
       },
-      //模糊查询
+      //模糊查询 将当前页，每页显示条数，搜索框的班级id和班级名称赋值给para,再将para作为getData方法的参数请求后端接口，后端使用pageVO对象接收参数
       search() {
         // console.log(this.formInline.college)
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{"name":this.formInline.name,
-            "title":this.formInline.title}};
+          key:{"title":this.formInline.title,
+            "sid":this.formInline.sid,
+          }};
         this.getData(para)
-      },
-      //根据qid查询回答
-      findAnswer(params){
-        findAnswerByQid(params).then(res => {
-          if(res.status==200){
-          this.loading = false
-          this.answerData=res.data
-            this.getData(this.formInline)
-          }
-        })
-      },
-
-      handleEdit2: function (index, row) {
-        this.editFormVisible2 = true
-        this.loading = true
-        this.editForm.id = row.id
-        var userId = JSON.parse(sessionStorage.getItem("user"));
-        this.editForm.uid = userId.id
-        this.editForm.content = ''
-        let para = {qid: row.id};
-        this.findAnswer(para)
-      },
-      // 回复的确定按钮
-      updateData () {
-        this.$refs.editForm.validate(valid => {
-          if (valid) {
-            this.$confirm("确认提交吗?", "提示", {}).then(() => {
-              let para = {userVO:{id:this.editForm.uid},
-                question:{id:this.editForm.id},
-                content:this.editForm.content};
-              console.log(para)
-              // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              reply(para).then(res => {
-                console.log(JSON.stringify(res))
-                if(res.status==200){
-                  this.$message({
-                    message: "提交成功",
-                    type: "success"
-                  });
-                  this.$refs["editForm"].resetFields();
-                  this.editFormVisible = false;
-                  // this.getData(this.formInline);
-                  console.log("ni"+this.editForm.id)
-                  let para = {qid: this.editForm.id};
-                  this.findAnswer(para)
-                  this.getData(this.formInline)
-                  console.log("success")
-                }else{
-                  this.$message({
-                    message: "提交失败",
-                    type: "error"
-                  });
-                }
-
-              })
-            }).catch(err => {
-              console.log(err)
-            })
-          }
-        })
       },
       //关闭弹窗
       closeDialog() {
+        this.editFormVisible = false
         this.delVisible = false
-        this.editFormVisible2=false
         this.logIds = ""
       },
       //点击复选框时，将长度赋值给delarr[]
@@ -357,17 +254,17 @@
       //禁用单个用户
       handleDelete(index, row) {
         let i = ""
-        if (row.state === 0) {
+        if (row.status === 0) {
           i = "确认启用该用户吗?"
-        } else if (row.state === 1) {
+        } else if (row.status === 1) {
           i = "确认禁用该用户吗?"
         }
         this.$confirm(i, "提示", {
           type: "warning"
         }).then(() => {
           let para = {id: row.id,
-            state:row.state===0?1:0};
-          banQuestion(para).then(res => {
+            status:row.status===0?1:0};
+          banArticle(para).then(res => {
             if (res > 0) {
               this.$message({
                 message: "操作成功",
@@ -382,7 +279,7 @@
       },
       //判断用户的status,如果已被禁用，则该条记录的复选框不能选中
       checkbox(row, index) {
-        if (row.state == 0) {
+        if (row.status == 0) {
           return 0;
         } else {
           return 1;
@@ -396,7 +293,7 @@
       //批量删除弹窗点击确定按钮的点击事件
       deleteAll() {
         let para = {"ids": this.logIds};
-        banRows(para)
+        banArticleRows(para)
           .then(res => {
             this.loading = false
             if (res.status==200) {
@@ -414,14 +311,13 @@
       exportExcel() {
         require.ensure([], () => {
           const { export_json_to_excel } = require('@/Excel/Export2Excel');
-          const tHeader = ['ID', '标题', '内容','时间','提问人','阅读量','有无回答','当前状态'];
-
+          const tHeader = ['ID', '文章标题', '发布时间','发布人','阅读量','文章所属分类','状态'];
           // 上面设置Excel的表格第一行的标题
-          const filterVal = ['id', 'title', 'content','time','userVO','quanity','status','state'];
+          const filterVal = ['id', 'title', 'createTime','name','quantity','sortName','status'];
           // 上面的index、nickName、name是tableData里对象的属性
           const list = this.tableData;  //把data里的tableData存到list
           const data = this.formatJson(filterVal, list);
-          export_json_to_excel(tHeader, data, '问题列表excel');
+          export_json_to_excel(tHeader, data, '文章列表excel');
         })
       },
 
@@ -429,7 +325,6 @@
         return jsonData.map(v => filterVal.map(j => v[j]))
       }
     },
-
 
 
   }
@@ -449,16 +344,12 @@
     color: red;
     font-size: 18px;
   }
-  .infinite-list{
-    text-align: center;
+  a {
+    text-decoration: none;
+    color: white;
   }
-  .infinite-list-item{
-    margin-top: 10px;
-    height: 60px;
-    line-height: 60px;
-    text-align: left;
-    width: 650px;
-    background-color: #eef1f0;
-    list-style-type: none;
+  .router-link-active {
+    text-decoration: none;
   }
+
 </style>

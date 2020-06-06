@@ -2,30 +2,16 @@
   <div>
     <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/echarts/echarts' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>文章分类管理</el-breadcrumb-item>
     </el-breadcrumb>
     <!--    搜索框-->
     <el-form :inline="true" :model="formInline" class="user-search">
       <el-form-item label="搜索：">
-        <el-select v-model="formInline.cid" clearable placeholder="请选择班级" size="small">
-          <el-option
-            v-for="(item,index) in selectData.class"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
+        <el-input size="small" v-model="formInline.id"  placeholder="输入文章分类id"></el-input>
       </el-form-item>
       <el-form-item label="">
-        <el-select v-model="formInline.gid" clearable placeholder="请选择所属小组" size="small">
-          <el-option
-            v-for="(item,index) in selectData.group"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
+        <el-input size="small" v-model="formInline.sortName" placeholder="输入文章分类名称"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button size="small" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
@@ -52,87 +38,29 @@
         fixed
         prop="id"
         label="ID"
-        width="120"
       >
       </el-table-column>
       <el-table-column
-        prop="username"
-        label="用户名"
-        width="120"
+        prop="sortName"
+        label="班级名"
       >
       </el-table-column>
       <el-table-column
-        prop="password"
-        label="密码"
-        width="200"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="用户姓名"
-        width="120"
-      >
-      </el-table-column>
-      <el-table-column
-        label="性别"
-        width="120"
-        :formatter="stateFormat2"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="phone"
-        label="手机号"
-        width="120"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="coidName"
-        label="所在学院"
-        width="120"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="cidName"
-        label="所在班级"
-        width="120"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="gidName"
-        label="所属小组"
-        width="120"
-      >
-      </el-table-column>
-      <el-table-column
-        label="账号角色"
-        width="120"
-      >
-        <template slot-scope="scope">
-<!--          {{ scope.row.roles[0].roleName.join(",") }}-->
-          <span v-for="i in scope.row.roles">
-            {{i.roleName}}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="pidName"
-        label="担任职务"
-        width="120"
+        prop="remark"
+        label="备注"
       >
       </el-table-column>
       <el-table-column
         label="当前状态"
-        width="120"
 
         :formatter="stateFormat">
       </el-table-column>
       <el-table-column
         fixed="right"
         label="操作"
-        width="300">
+        width="230">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.$index, scope.row)" type="primary" size="small">编辑</el-button>
-          <el-button @click="handleEdit2(scope.$index, scope.row)" type="primary" size="small">角色</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.status===0">禁用</el-button>
           <el-button type="success" size="small" @click="handleDelete(scope.$index, scope.row)" :disabled="scope.row.status===1">启用</el-button>
         </template>
@@ -144,120 +72,11 @@
     <!-- 编辑及新增弹窗 -->
     <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog" center>
       <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="用户名" prop="username">
-          <el-input size="small"  auto-complete="off" v-model="editForm.username" placeholder="请输入用户名"></el-input>
+        <el-form-item label="文章分类名" prop="sortName">
+          <el-input size="small"  auto-complete="off" v-model="editForm.sortName" placeholder="请输入文章分类名称"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input size="small"  auto-complete="off" v-model="editForm.password" placeholder="请输入密码"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input size="small"  auto-complete="off" v-model="editForm.phone" placeholder="请输入手机号"></el-input>
-        </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input size="small"  auto-complete="off" v-model="editForm.name" placeholder="请输入姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-select v-model="editForm.sex" clearable placeholder="请选择性别" size="small">
-            <el-option
-              label="男"
-              :value="1">
-            </el-option>
-            <el-option
-              label="女"
-              :value="0">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属学院" prop="coid">
-          <el-select v-model="editForm.coid" clearable placeholder="请选择所属学院" size="small">
-            <el-option
-              v-for="(item,index) in selectData.college"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属班级" prop="cid">
-          <el-select v-model="editForm.cid" clearable placeholder="请选择所属班级" size="small">
-            <el-option
-              v-for="(item,index) in selectData.class"
-              v-if="item.college.id==editForm.coid"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属小组" prop="cid">
-          <el-select v-model="editForm.gid" clearable placeholder="请选择所属小组" size="small">
-            <el-option
-              v-for="(item,index) in selectData.group"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="担任职务" prop="pid">
-          <el-select v-model="editForm.pid" clearable placeholder="请选择职务" size="small">
-            <el-option
-              v-for="(item,index) in selectData.position"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="closeDialog">取消</el-button>
-        <el-button size="small"
-                   type="primary"
-                   :loading="loading"
-                   class="title"
-                   v-if="this.title=='添加'"
-                   @click="createData">保存</el-button>
-        <el-button size="small"
-                   type="primary"
-                   :loading="loading"
-                   class="title"
-                   v-else
-                   @click="updateData">修改</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="角色分配" :visible.sync="editFormVisible2" width="30%" @click="closeDialog" center>
-      <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="公告内容" prop="content">
-          <el-input
-            type="textarea"
-            autosize
-            placeholder="请输入公告内容"
-            v-model="editForm.content">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="截至时间" prop="deadline">
-          <el-date-picker
-            v-model="editForm.deadline"
-            type="datetime"
-            format="yyyy-MM-dd HH:mm:ss"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="报告类型" prop="sort">
-          <el-select v-model="editForm.sort" clearable placeholder="请选择">
-            <el-option
-              label="周报"
-              :value="1">
-            </el-option>
-            <el-option
-
-              label="日报"
-              :value="0">
-            </el-option>
-          </el-select>
+        <el-form-item label="备注" prop="remark">
+          <el-input size="small"  auto-complete="off" v-model="editForm.remark" placeholder="请输入备注"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -288,20 +107,19 @@
 </template>
 
 <script>
+  // 导入请求方法的接口
+  import { findAllSort,addSort,updateSort,banSort,banSortRows } from '@/api/Article'
   import Pagination from "../public/Pagination";
-  import { findAllUser,getSearchData,addUser,updateUser,banUser,banUserRows } from '@/api/User'
+
   export default {
-    name: "User",
+    name: "Sort",
     components: {Pagination},
     data() {
       return {
-        classid:[],
-        selectData:[],
         //新增及编辑弹窗的标题
         title: '添加',
         //新增及编辑弹窗是否显示
         editFormVisible: false,
-        editFormVisible2: false,
         //批量禁用弹窗是否显示
         delVisible:false,
         //数据加载前loading的动画是否显示
@@ -309,15 +127,8 @@
         //新增及编辑弹窗form表单的值
         editForm: {
           id: '',
-          gid: '',
-          cid:'',
-          name:'',
-          username:'',
-          password:'',
-          phone:'',
-          sex:'',
-          coid:'',
-          pid:'',
+          sortName: '',
+          remark: '',
           // token: localStorage.getItem('logintoken')
         },
         //存放id的数组转换后的字符串
@@ -335,35 +146,9 @@
         },
         //表单验证
         rules: {
-          gid: [
-            { required: true, message: '请选择小组', trigger: 'blur' }
+          sortName: [
+            { required: true, message: '请输入文章分类名', trigger: 'blur' }
           ],
-          pid: [
-            { required: true, message: '请选择职务', trigger: 'blur' }
-          ],
-          coid: [
-            { required: true, message: '请选择学院', trigger: 'blur' }
-          ],
-          cid: [
-            { required: true, message: '请选择班级', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
-          ],
-          username: [
-            { required: true, message: '请输入用户名称', trigger: 'blur' }
-          ],
-          name: [
-            { required: true, message: '请输入姓名', trigger: 'blur' }
-          ],
-          phone: [
-            { required: true, message: "请输入手机号", trigger: "blur" },
-            // 这个只能验证手机号
-            // { pattern:/^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9])[0-9]{8}$/, message: "请输入合法手机号", trigger: "blur" }
-            { pattern:/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/, message: "请输入合法手机号/电话号", trigger: "blur" }
-          ],
-
-
         },
         //返回给分页组件
         pageparm: {
@@ -373,6 +158,8 @@
         },
         //表格的内容
         tableData: [],
+        //存放添加编辑弹窗中下拉菜单的值
+        selectData:[]
       }
     },
 
@@ -381,7 +168,6 @@
      */
     created:function(){
       this.getData(this.formInline)
-      this.getSearch()
 
     },
     /**
@@ -393,12 +179,12 @@
 
         this.loading = true
         //分页查询
-        findAllUser(parameter)
+        findAllSort(parameter)
           .then(res => {
-            console.log("CC"+JSON.stringify(res.data))
+            // console.log("res:"+JSON.stringify(res.data.list))
             this.loading = false
             if (res.status!=200) {
-              console.log("CC"+res.data)
+
               this.$message({
                 type: 'error',
                 message: "查询失败"
@@ -410,6 +196,7 @@
               });
               //将查询到的用户数据赋值给tableData
               this.tableData = res.data.list
+              console.log("test:"+JSON.stringify(res.data.list))
               // 将当前第几页每页多少条数据等赋值给pageparm
               this.pageparm.currentPage = this.formInline.page
               this.pageparm.pageSize = this.formInline.rows
@@ -421,23 +208,13 @@
             this.$message.error('加载失败，请稍后再试！')
           })
       },
-      async getSearch(){
-        getSearchData().then(res=>{
-          if(res.status==200){
-            this.selectData=res.data
-          }
-
-        })
-      },
-
       //分页组件的点击事件，获取分页的属性
       callFather(parm) {
         this.formInline.page = parm.currentPage
         this.formInline.rows = parm.pageSize
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{cid:this.formInline.cid,
-               gid:this.formInline.gid}};
+          key:{"sortName":this.formInline.sortName}};
         this.getData(para)
       },
       //根据查询到status判断，为1则显示启用，为0则禁用
@@ -448,21 +225,14 @@
           return "禁用";
         }
       },
-
-      stateFormat2(row) {
-        if (row.sex === 1) {
-          return "男";
-        } else {
-          return "女";
-        }
-      },
       //模糊查询 将当前页，每页显示条数，搜索框的班级id和班级名称赋值给para,再将para作为getData方法的参数请求后端接口，后端使用pageVO对象接收参数
       search() {
         // console.log(this.formInline.college)
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{cid:this.formInline.cid,
-            gid:this.formInline.gid}};
+          key:{"id":this.formInline.id,
+            "sortName":this.formInline.sortName,
+            }};
         this.getData(para)
       },
       //新增及编辑的点击事件，判断是新增还是编辑
@@ -473,57 +243,24 @@
           console.log(row.id)
           this.title = '修改'
           this.editForm.id = row.id
-          this.editForm.name = row.name
-          this.editForm.username = row.username
-          this.editForm.password=row.password
-          this.editForm.cid=row.cid
-          this.editForm.coid=row.coid
-          this.editForm.pid=row.pid
-          this.editForm.gid=row.gid
-          this.editForm.sex=row.sex
-          this.editForm.phone=row.phone
+          this.editForm.sortName = row.sortName
+          this.editForm.remark = row.remark
         } else {
           this.title = '添加'
           this.editForm.id = ''
-          this.editForm.name = ''
-          this.editForm.username = ''
-          this.editForm.password=''
-          this.editForm.cid=''
-          this.editForm.coid=''
-          this.editForm.pid=''
-          this.editForm.gid=''
-          this.editForm.sex=''
-          this.editForm.phone=''
+          this.editForm.sortName = ''
+          this.editForm.remark = ''
         }
-      },
-
-      handleEdit2: function (index, row) {
-        this.editFormVisible2 = true
-        this.loading = true
-        this.editForm.id = row.id
-        var userId = JSON.parse(sessionStorage.getItem("user"));
-        this.editForm.uid = userId.id
-        this.editForm.content = ''
-        let para = {qid: row.id};
-        this.findAnswer(para)
       },
       // 新增的确定按钮
       createData () {
         this.$refs.editForm.validate(valid => {
           if (valid) {
             this.$confirm("确认提交吗？", "提示", {}).then(() => {
-              let para = {name:this.editForm.name,
-                          username:this.editForm.username,
-                          password:this.editForm.password,
-                          phone:this.editForm.phone,
-                          sex:this.editForm.sex,
-                          cid:this.editForm.cid,
-                          coid:this.editForm.coid,
-                          pid:this.editForm.pid,
-                          gid:this.editForm.gid}
+              let para = {sortName:this.editForm.sortName,
+                remark:this.editForm.remark}
               // // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              addUser(para).then(res => {
-                console.log("succ")
+              addSort(para).then(res => {
                 if(res.status==200){
                   this.$message({
                     message: "提交成功",
@@ -551,20 +288,12 @@
         this.$refs.editForm.validate(valid => {
           if (valid) {
             this.$confirm("确认修改吗?", "提示", {}).then(() => {
-              let para = {
-                id:this.editForm.id,
-                name:this.editForm.name,
-                username:this.editForm.username,
-                password:this.editForm.password,
-                phone:this.editForm.phone,
-                sex:this.editForm.sex,
-                cid:this.editForm.cid,
-                coid:this.editForm.coid,
-                pid:this.editForm.pid,
-                gid:this.editForm.gid};
-              console.log(para)
+              let para = {id: this.editForm.id,
+                sortName:this.editForm.sortName,
+                remark:this.editForm.remark,
+                };
               // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              updateUser(para).then(res => {
+              updateSort(para).then(res => {
                 console.log(JSON.stringify(res))
                 if(res.status==200){
                   this.$message({
@@ -574,7 +303,6 @@
                   this.$refs["editForm"].resetFields();
                   this.editFormVisible = false;
                   this.getData(this.formInline);
-                  console.log("success")
                 }else{
                   this.$message({
                     message: "提交失败",
@@ -613,7 +341,7 @@
         }).then(() => {
           let para = {id: row.id,
             status:row.status===0?1:0};
-          banUser(para).then(res => {
+          banSort(para).then(res => {
             if (res > 0) {
               this.$message({
                 message: "操作成功",
@@ -642,7 +370,7 @@
       //批量删除弹窗点击确定按钮的点击事件
       deleteAll() {
         let para = {"ids": this.logIds};
-        banUserRows(para)
+        banSortRows(para)
           .then(res => {
             this.loading = false
             if (res.status==200) {
@@ -660,13 +388,13 @@
       exportExcel() {
         require.ensure([], () => {
           const { export_json_to_excel } = require('@/Excel/Export2Excel');
-          const tHeader = ['ID', '用户名', '密码','姓名','手机','性别(0:男1：女)','所属学院','所在班级','所在小组','职务','创建时间','当前状态'];
+          const tHeader = ['ID', '文章分类名称', '备注','当前状态'];
           // 上面设置Excel的表格第一行的标题
-          const filterVal = ['id', 'username', 'password','name','phone','sex','coidName','cidName','gidName','pidName','created','status'];
+          const filterVal = ['id', 'name', 'remark','status'];
           // 上面的index、nickName、name是tableData里对象的属性
           const list = this.tableData;  //把data里的tableData存到list
           const data = this.formatJson(filterVal, list);
-          export_json_to_excel(tHeader, data, '用户列表excel');
+          export_json_to_excel(tHeader, data, '文章分类列表excel');
         })
       },
 
@@ -674,7 +402,6 @@
         return jsonData.map(v => filterVal.map(j => v[j]))
       }
     },
-
 
 
   }

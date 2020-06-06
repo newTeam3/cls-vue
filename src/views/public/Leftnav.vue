@@ -21,7 +21,7 @@
       <el-menu-item-group>
         <el-menu-item index="1-1">
 <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
-          <router-link to="/users/page">内容列表</router-link>
+          <router-link to="/users/user">用户管理</router-link>
         </el-menu-item>
         <el-menu-item index="1-2">
         <router-link to="/users/page">内容列表</router-link>
@@ -66,6 +66,20 @@
       <i class="el-icon-setting"></i>
       <span slot="title">文章管理</span>
       </template>
+      <el-menu-item-group>
+        <el-menu-item index="3-1">
+          <i class="el-icon-menu"></i>
+          <router-link to="/article/add">添加文章</router-link>
+        </el-menu-item>
+        <el-menu-item index="3-2">
+        <i class="el-icon-menu"></i>
+        <router-link to="/article/sort">文章分类管理</router-link>
+      </el-menu-item>
+        <el-menu-item index="3-3">
+          <i class="el-icon-menu"></i>
+          <router-link to="/article/article">文章管理</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
     </el-submenu>
     <el-submenu index="4">
       <template slot="title">
@@ -94,14 +108,34 @@
     <el-submenu index="5">
       <template slot="title">
       <i class="el-icon-setting"></i>
-      <span slot="title">公告管理</span>
+      <span slot="title">任务管理</span>
       </template>
+      <el-menu-item-group>
+        <el-menu-item index="5-1">
+          <i class="el-icon-menu"></i>
+          <router-link to="/task/notice">公告管理</router-link>
+        </el-menu-item>
+        <el-menu-item index="5-2">
+          <i class="el-icon-menu"></i>
+          <router-link to="/task/task">任务管理</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
     </el-submenu>
     <el-submenu index="6">
       <template slot="title">
       <i class="el-icon-setting"></i>
       <span slot="title">日周报管理</span>
       </template>
+      <el-menu-item-group>
+        <el-menu-item index="6-1">
+          <i class="el-icon-menu"></i>
+          <router-link to="/message/dayReport">日报管理</router-link>
+        </el-menu-item>
+        <el-menu-item index="6-2">
+          <i class="el-icon-menu"></i>
+          <router-link to="/message/weekReport">周报管理</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
     </el-submenu>
     <el-submenu index="7">
       <template slot="title">
@@ -119,6 +153,34 @@
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
+    <el-submenu index="8">
+      <template slot="title">
+        <i class="el-icon-setting"></i>
+        <span slot="title">数据报表</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="8-1">
+          <i class="el-icon-menu"></i>
+          <router-link to="/echarts/echarts">数据报表</router-link>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-submenu>
+    <el-submenu index="9">
+      <template slot="title">
+        <i class="el-icon-setting"></i>
+        <span slot="title">系统管理</span>
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="9-1">
+          <i class="el-icon-menu"></i>
+          <router-link to="/sys/changePwd">修改密码</router-link>
+        </el-menu-item>
+        <el-menu-item index="8-2" @click="logout">
+          <i class="el-icon-menu"></i>
+          退出登录
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-submenu>
   </el-menu>
 
 </template>
@@ -132,7 +194,11 @@
         },
         handleClose(key, keyPath) {
           console.log(key, keyPath);
-        }
+        },
+        logout(){
+          window.sessionStorage.clear()
+          this.$router.push("/login")
+        },
       }
     }
 </script>

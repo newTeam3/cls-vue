@@ -12,13 +12,18 @@
     <el-submenu index="2" class="submenu">
       <!-- <template slot="title">{{user.userRealName}}</template> -->
       <template slot="title">
+        <span v-for="i in userData.authorities">
+          [{{i.authority}}]
+        </span>
         <i class="el-icon-user-solid"></i>
         <span>{{userData.name}}</span>
       </template>
-      <el-menu-item index="2-1">设置</el-menu-item>
-      <el-menu-item index="2-2" @click="logout">退出</el-menu-item>
+      <el-menu-item index="2-1">个人资料</el-menu-item>
+      <el-menu-item index="2-2">修改密码</el-menu-item>
+      <el-menu-item index="2-3" @click="logout">退出</el-menu-item>
     </el-submenu>
   </el-menu>
+
 </template>
 
 <script>
@@ -48,6 +53,7 @@
         .then(res => {
           console.log("res:"+JSON.stringify(res.data))
           if(res.status==200){
+            console.log(res.data)
              let par= JSON.stringify(res.data)
               sessionStorage.setItem('user',par)
               this.userData=res.data

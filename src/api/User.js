@@ -3,38 +3,46 @@ import axios from "axios";
 //分页查询用户
 export const findAllUser = (params) => {
   // return req("post", "/findAll", params)
-  return axios.post("/findAll",params).then(res=>res.data);
+  return axios.post("/user/findAllUser",params).then(res=>res);
 };
-//单个用户禁用及启用
-export const deleteUser = (params) => {
+export const getSearchData = () => {
 
-  return axios.get("/deleteUser",{
-    params: params
-  }).then(res=>res.data);
+  return axios.get("/user/getSearchData").then(res=>res);
 };
-//批量禁用用户
-export const deleteRow = (params) => {
-  console.log("这是deleterow的"+ params)
-  return axios.get("/deleteAll",{
-    params:params
-  }).then(res=>res.data)
-};
-//编辑修改用户
-export const editUser = (params) => {
-  console.log("这是edituser的"+ params)
-  return axios.get("/updateUser",{
-    params: params
-  }).then(res=>res.data);
-};
-//新增用户
+
 export const addUser = (params) => {
-  console.log("这是adduser的"+ params)
-  return axios.get("/addUser",{
-    params: params
-  }).then(res=>res.data);
+  return axios.post("/user/addUser",params).then(res=>res);
+};
 
+export const updateUser = (params) => {
+  return axios.post("/user/updateUser",params).then(res=>res);
+};
+export const banUser = (params) => {
+  return axios.post("/user/banUser",params).then(res=>res);
+};
+export const banUserRows = (params) => {
+  return axios.get("/user/banUserRows",{
+    params:params
+  }).then(res=>res);
 };
 export const login = (params) => {
   return axios.post("/auth",params).then(res=>res);
 };
-
+export const checkPhone = (params) => {
+  return axios.get("/user/checkPhone",{
+    params:params
+  }).then(res=>res);
+};
+export const checkCode = (params) => {
+  return axios.get("/sms/checkCode",{
+    params:params
+  }).then(res=>res);
+};
+export const send = (params) => {
+  return axios.get("/sms/send",{
+    params:params
+  }).then(res=>res);
+};
+export const changePwd = (params) => {
+  return axios.post("/user/changePwd",params).then(res=>res);
+};
