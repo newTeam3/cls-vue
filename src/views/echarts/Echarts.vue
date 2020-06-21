@@ -9,26 +9,30 @@
       <el-breadcrumb-item>首页</el-breadcrumb-item>
 
     </el-breadcrumb>
+    <div style="width: 100vw;margin-top: 20px;margin-left: 500px"><i class="el-icon-message-solid"></i>最新公告：{{notice.content}}</div>
     <!-- 搜索，切换 -->
     <el-row :gutter="23">
-      <el-col :span="18">
-        <div class="stbgc">
-          <el-row :gutter="23">
-            <el-col :span="7">
-              <el-input size="small" v-model="machineNo" placeholder="请输入班级"></el-input>
-            </el-col>
-            <el-col :span="7">
-              <el-input size="small" v-model="machineNo" placeholder="请输入学院"></el-input>
-            </el-col>
-            <el-col :span="7">
-              <el-input size="small" v-model="machineNo" placeholder="请输入性别"></el-input>
-            </el-col>
-            <el-col :span="3" class="stsearch">
-              <el-button size="small" type="primary">搜索</el-button>
-            </el-col>
-          </el-row>
-        </div>
-      </el-col>
+<!--      <el-col :span="18">-->
+<!--        <div class="stbgc">-->
+<!--          <el-row :gutter="23">-->
+<!--&lt;!&ndash;            <el-col :span="7">&ndash;&gt;-->
+<!--&lt;!&ndash;              <el-input size="small" v-model="machineNo" placeholder="请输入班级"></el-input>&ndash;&gt;-->
+<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
+<!--&lt;!&ndash;            <el-col :span="7">&ndash;&gt;-->
+<!--&lt;!&ndash;              <el-input size="small" v-model="machineNo" placeholder="请输入学院"></el-input>&ndash;&gt;-->
+<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
+<!--&lt;!&ndash;            <el-col :span="7">&ndash;&gt;-->
+<!--&lt;!&ndash;              <el-input size="small" v-model="machineNo" placeholder="请输入性别"></el-input>&ndash;&gt;-->
+<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
+<!--&lt;!&ndash;            <el-col :span="3" class="stsearch">&ndash;&gt;-->
+<!--&lt;!&ndash;              <el-button size="small" type="primary">搜索</el-button>&ndash;&gt;-->
+<!--&lt;!&ndash;            </el-col>&ndash;&gt;-->
+
+
+
+<!--          </el-row>-->
+<!--        </div>-->
+<!--      </el-col>-->
 <!--      <el-col :span="6">-->
 <!--        <div class="stbgc">-->
 <!--          <el-row>-->
@@ -81,12 +85,15 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+  import {findAllNotice} from '@/api/task'
   import { getClasses,getSex } from '@/api/Echarts'
   import Chart from 'echarts'
   export default {
     name: "Echarts",
     data() {
       return {
+        notice:[],
+        noticeData:[],
         machineNo: '',
         type: 'day',
         classesData:[],
@@ -489,7 +496,9 @@
       // 点聚合组件
     },
     // 创建完毕状态(里面是操作)
-    created() { },
+    created() {
+      this.getNoticeData()
+    },
     // 挂载结束状态(里面是操作)
     mounted() {
       this.getSCE()
@@ -500,6 +509,15 @@
     },
     // 里面的函数只有调用才会执行
     methods: {
+      getNoticeData(){
+        let par={page:1,rows:5}
+        findAllNotice(par).then(res=>{
+          if(res.status==200){
+            this.notice=res.data.list[0]
+            console.log("dd"+JSON.stringify(this.notice))
+          }
+        })
+      },
       // 交易总笔数
       getSCE() {
         this.chart = Chart.init(this.$refs.SCEchart)

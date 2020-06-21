@@ -2,7 +2,7 @@
   <div>
   <li  style="list-style-type: none">
         <span @click="toggle" style="line-height: 60px">
-           <img style="border-radius:25px;height: 50px;width: 50px;line-height: 60px" :size="50" :src="this.avatarUrl"/>
+           <img style="border-radius:25px;height: 50px;width: 50px;line-height: 60px" :size="50" :src="model.img"/>
           {{ model.name }}
           <span v-if="model.pid==null">评论</span>
           <span v-else>回复</span>
@@ -29,7 +29,7 @@
                   >保存</el-button>
       </el-form-item>
     </el-form>
-    <HR align=center width=300 color=#987cb9 SIZE=1></HR>
+    <HR align=center width=100% color=#987cb9 SIZE=1 style="margin-left: 200px"></HR>
     <ul v-if="isFolder" v-show="open">
       <items v-for="(item, index1) in model.child" :model="item" :key="index1">
         {{index}}
@@ -55,7 +55,6 @@
           avatar:'',
           // 控制子列表的显示隐藏
           open: true,
-          avatarUrl:require("@/assets/img/avatar.jpg"),
           rules: {
             content: [
               { required: true, message: '请输入回复内容', trigger: 'blur' }

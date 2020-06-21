@@ -219,7 +219,7 @@
         this.formInline.rows = parm.pageSize
         let para = {page: this.formInline.page,
           rows:this.formInline.rows,
-          key:{"name":this.formInline.name}};
+          key:{"content":this.formInline.content,"name":this.formInline.name}};
         this.getData(para)
       },
       //根据查询到status判断，为1则显示启用，为0则禁用

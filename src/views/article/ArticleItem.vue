@@ -32,7 +32,7 @@
           </el-form-item>
         </el-form>
       <ul>
-        <li v-if="JSON.stringify(commentsData)=='[]'" style="text-align: center"><p style="margin-left: 350px"> <el-link type="success">暂无评论，快来评论吧</el-link></p></li>
+        <li v-if="JSON.stringify(commentsData)=='[]'" style="text-align: center;list-style: none"><p style="margin-left: 350px"> <el-link type="success">暂无评论，快来评论吧</el-link></p></li>
         <Items v-else v-for="(model, index) in commentsData" :model="model" :key="index"></Items>
 
       </ul>
@@ -99,7 +99,7 @@
         getCommentData(params){
           let para={aid:params}
             getComments(para).then(res=>{
-              console.log(res.data)
+              console.log("这是comm"+JSON.stringify(res.data))
               this.commentsData=res.data
               console.log("这是"+JSON.stringify(this.commentsData))
             })

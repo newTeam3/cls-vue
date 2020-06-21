@@ -20,14 +20,9 @@
       </template>
       <el-menu-item-group>
         <el-menu-item index="1-1">
+          <i class="el-icon-menu"></i>
 <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
           <router-link to="/users/user">用户管理</router-link>
-        </el-menu-item>
-        <el-menu-item index="1-2">
-        <router-link to="/users/page">内容列表</router-link>
-      </el-menu-item>
-        <el-menu-item index="1-3">
-          <router-link to="/users/test">测试列表</router-link>
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>

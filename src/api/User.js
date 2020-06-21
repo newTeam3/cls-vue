@@ -46,3 +46,11 @@ export const send = (params) => {
 export const changePwd = (params) => {
   return axios.post("/user/changePwd",params).then(res=>res);
 };
+export const findRolesByUid = (params) => {
+  return axios.get("/user/findRolesByUid",{params:params}).then(res=>res);
+};
+export const updateRoles = (params) => {
+  return axios.get("/user/updateRoles",{
+    params:params
+  }).then(res=>res);
+};

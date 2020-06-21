@@ -103,17 +103,17 @@
         width="120"
       >
       </el-table-column>
-      <el-table-column
-        label="账号角色"
-        width="120"
-      >
-        <template slot-scope="scope">
-<!--          {{ scope.row.roles[0].roleName.join(",") }}-->
-          <span v-for="i in scope.row.roles">
-            {{i.roleName}}
-          </span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        label="账号角色"-->
+<!--        width="120"-->
+<!--      >-->
+<!--        <template slot-scope="scope">-->
+<!--&lt;!&ndash;          {{ scope.row.roles[0].roleName.join(",") }}&ndash;&gt;-->
+<!--          <span v-for="i in scope.row.roles">-->
+<!--            {{i.roleName}}-->
+<!--          </span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column
         prop="pidName"
         label="担任职务"
@@ -227,53 +227,23 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="角色分配" :visible.sync="editFormVisible2" width="30%" @click="closeDialog" center>
-      <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
-        <el-form-item label="公告内容" prop="content">
-          <el-input
-            type="textarea"
-            autosize
-            placeholder="请输入公告内容"
-            v-model="editForm.content">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="截至时间" prop="deadline">
-          <el-date-picker
-            v-model="editForm.deadline"
-            type="datetime"
-            format="yyyy-MM-dd HH:mm:ss"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="报告类型" prop="sort">
-          <el-select v-model="editForm.sort" clearable placeholder="请选择">
-            <el-option
-              label="周报"
-              :value="1">
-            </el-option>
-            <el-option
-
-              label="日报"
-              :value="0">
-            </el-option>
-          </el-select>
+    <el-dialog title="角色分配" :visible.sync="editFormVisible2" width="30%" @click="closeDialog" :before-close="handleDialogClose" center>
+      <el-form label-width="120px" :model="editForm"  ref="editForm">
+        <el-form-item label="角色">
+          <el-checkbox v-model="checked1" >超级管理员</el-checkbox>
+          <el-checkbox v-model="checked2" >管理员</el-checkbox>
+          <el-checkbox v-model="checked3" >用户</el-checkbox>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="closeDialog">取消</el-button>
         <el-button size="small"
                    type="primary"
-                   :loading="loading"
+                   :loading="loading1"
                    class="title"
-                   v-if="this.title=='添加'"
-                   @click="createData">保存</el-button>
-        <el-button size="small"
-                   type="primary"
-                   :loading="loading"
-                   class="title"
-                   v-else
-                   @click="updateData">修改</el-button>
+
+                   @click="updateRole">保存</el-button>
+
       </div>
     </el-dialog>
     <!--    批量禁用弹窗-->
@@ -289,13 +259,20 @@
 
 <script>
   import Pagination from "../public/Pagination";
-  import { findAllUser,getSearchData,addUser,updateUser,banUser,banUserRows } from '@/api/User'
+  import { findAllUser,getSearchData,addUser,updateUser,banUser,banUserRows,findRolesByUid,updateRoles } from '@/api/User'
   export default {
     name: "User",
     components: {Pagination},
     data() {
       return {
+        uid:'',
+        par:'',
+        loading1:false,
+        checked1:false,
+        checked2:false,
+        checked3:false,
         classid:[],
+        rolesData:[],
         selectData:[],
         //新增及编辑弹窗的标题
         title: '添加',
@@ -322,7 +299,7 @@
         },
         //存放id的数组转换后的字符串
         logIds:"",
-
+        updatearr:[],
         //存放批量禁用的id
         delarr:[],
         //分页
@@ -395,7 +372,7 @@
         //分页查询
         findAllUser(parameter)
           .then(res => {
-            console.log("CC"+JSON.stringify(res.data))
+
             this.loading = false
             if (res.status!=200) {
               console.log("CC"+res.data)
@@ -410,6 +387,7 @@
               });
               //将查询到的用户数据赋值给tableData
               this.tableData = res.data.list
+              console.log("CC"+JSON.stringify(this.tableData))
               // 将当前第几页每页多少条数据等赋值给pageparm
               this.pageparm.currentPage = this.formInline.page
               this.pageparm.pageSize = this.formInline.rows
@@ -439,6 +417,12 @@
           key:{cid:this.formInline.cid,
                gid:this.formInline.gid}};
         this.getData(para)
+      },
+      handleDialogClose(){
+        this.checked1=false
+        this.checked2=false
+        this.checked3=false
+        this.editFormVisible2=false
       },
       //根据查询到status判断，为1则显示启用，为0则禁用
       stateFormat(row) {
@@ -499,13 +483,32 @@
 
       handleEdit2: function (index, row) {
         this.editFormVisible2 = true
-        this.loading = true
-        this.editForm.id = row.id
-        var userId = JSON.parse(sessionStorage.getItem("user"));
-        this.editForm.uid = userId.id
-        this.editForm.content = ''
-        let para = {qid: row.id};
-        this.findAnswer(para)
+        this.uid=row.id
+        let p={userId:row.id}
+        findRolesByUid(p).then(res=>{
+          if(res.status==200){
+            this.rolesData=res.data
+            for(let i=0;i<this.rolesData.length;i++){
+              if(this.rolesData[i].id==1){
+                this.checked1=true
+              }
+              if(this.rolesData[i].id==2){
+                this.checked2=true
+              }
+              if(this.rolesData[i].id==3){
+                this.checked3=true
+              }
+            }
+          }
+        })
+
+        // this.loading = true
+        // this.editForm.id = row.id
+        // var userId = JSON.parse(sessionStorage.getItem("user"));
+        // this.editForm.uid = userId.id
+        // this.editForm.content = ''
+        // let para = {qid: row.id};
+        // this.findAnswer(para)
       },
       // 新增的确定按钮
       createData () {
@@ -546,54 +549,87 @@
           }
         })
       },
-      // 编辑的确定按钮
-      updateData () {
-        this.$refs.editForm.validate(valid => {
-          if (valid) {
-            this.$confirm("确认修改吗?", "提示", {}).then(() => {
-              let para = {
-                id:this.editForm.id,
-                name:this.editForm.name,
-                username:this.editForm.username,
-                password:this.editForm.password,
-                phone:this.editForm.phone,
-                sex:this.editForm.sex,
-                cid:this.editForm.cid,
-                coid:this.editForm.coid,
-                pid:this.editForm.pid,
-                gid:this.editForm.gid};
-              console.log(para)
-              // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
-              updateUser(para).then(res => {
-                console.log(JSON.stringify(res))
-                if(res.status==200){
-                  this.$message({
-                    message: "提交成功",
-                    type: "success"
-                  });
-                  this.$refs["editForm"].resetFields();
-                  this.editFormVisible = false;
-                  this.getData(this.formInline);
-                  console.log("success")
-                }else{
-                  this.$message({
-                    message: "提交失败",
-                    type: "error"
-                  });
-                }
-
-              })
-            }).catch(err => {
-              console.log(err)
-            })
+      updateRole(){
+        console.log(this.checked1)
+        if(this.checked1==true){
+          this.updatearr.push(1)
+        }
+        if(this.checked2==true){
+          this.updatearr.push(2)
+        }
+        if(this.checked3==true){
+          this.updatearr.push(3)
+        }
+        this.par=this.updatearr.join()
+        let p={ids:this.par,userId:this.uid}
+        console.log("par"+this.par)
+        updateRoles(p).then(res=>{
+          if(res.status==200){
+            this.$message({
+              message: "提交成功",
+              type: "success"
+            });
+            this.editFormVisible2=false
+            this.closeDialog()
+            window.location.reload(true);
+            // this.getData(this.formInline)
           }
         })
       },
+      // 编辑的确定按钮
+        updateData () {
+          this.$refs.editForm.validate(valid => {
+            if (valid) {
+              this.$confirm("确认修改吗?", "提示", {}).then(() => {
+                let para = {
+                  id:this.editForm.id,
+                  name:this.editForm.name,
+                  username:this.editForm.username,
+                  password:this.editForm.password,
+                  phone:this.editForm.phone,
+                  sex:this.editForm.sex,
+                  cid:this.editForm.cid,
+                  coid:this.editForm.coid,
+                  pid:this.editForm.pid,
+                  gid:this.editForm.gid};
+                console.log(para)
+                // para.birth = !para.birth || para.birth == "" ? "" : date.formatDate.format(new Date(para.birth), "yyyy-MM-dd");
+                updateUser(para).then(res => {
+                  console.log(JSON.stringify(res))
+                  if(res.status==200){
+                    this.$message({
+                      message: "提交成功",
+                      type: "success"
+                    });
+                    this.$refs["editForm"].resetFields();
+                    this.editFormVisible = false;
+                    this.getData(this.formInline);
+                    console.log("success")
+                  }else{
+                    this.$message({
+                      message: "提交失败",
+                      type: "error"
+                    });
+                  }
+
+                })
+              }).catch(err => {
+                console.log(err)
+              })
+            }
+          })
+        },
       //关闭弹窗
       closeDialog() {
         this.editFormVisible = false
+        this.editFormVisible2 = false
         this.delVisible = false
         this.logIds = ""
+        this.updatearr=[]
+        this.par=""
+        this.checked1=false
+        this.checked2=false
+        this.checked3=false
       },
       //点击复选框时，将长度赋值给delarr[]
       selsChange(val) {
