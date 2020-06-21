@@ -23,7 +23,16 @@ axios.interceptors.request.use(config=>{
   config.headers.Authorization="Bearer "+store.state.token;
   console.log(config);
   return config
-})
+}),
+  axios.interceptors.response.use(function (response){
+    // 处理响应数据
+    return response;
+  }, function (error) {
+    // 处理响应失败
+      Vue.prototype.$message.error('系统发生错误');
+
+    return Promise.reject(error);
+  })
 /* eslint-disable no-new */
 router.beforeEach((to, from, next) => {
     if (to.meta.requireAuth) {
