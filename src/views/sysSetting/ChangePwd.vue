@@ -1,7 +1,7 @@
 <template>
     <div>
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/echarts/echarts' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>修改密码</el-breadcrumb-item>
       </el-breadcrumb>
       <div style="width: 800px;margin: 30px auto">

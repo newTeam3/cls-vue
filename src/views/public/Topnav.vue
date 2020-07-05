@@ -13,7 +13,10 @@
       <!-- <template slot="title">{{user.userRealName}}</template> -->
       <template slot="title">
         <span v-for="i in userData.authorities">
-          [{{i.authority}}]
+         <span v-show="i.authority=='ROLE_root'">[超级管理员]</span>
+          <span v-show="i.authority=='ROLE_admin'">[管理员]</span>
+           <span v-show="i.authority=='ROLE_user'">[用户]</span>
+<!--          [{{i.authority}}]-->
         </span>
         <i class="el-icon-user-solid"></i>
         <span>{{userData.name}}</span>
@@ -44,6 +47,19 @@
         handleSelect(key, keyPath) {
           console.log(key, keyPath);
         },
+        isShow(i) {
+          if(i.authority=='ROLE_root'){
+            return '超级管理员';
+          }
+          if(i.authority=='ROLE_admin'){
+            return '管理员';
+          }
+          if(i.authority=='ROLE_user'){
+            return '用户';
+          }
+
+
+        },
         logout(){
           window.sessionStorage.clear()
           this.$router.push("/login")
@@ -58,24 +74,6 @@
               sessionStorage.setItem('user',par)
               this.userData=res.data
           }
-          // this.loading = false
-          // if (res.status!=200) {
-          //   this.$message({
-          //     type: 'error',
-          //     message: "查询失败"
-          //   })
-          // } else {
-          //   this.$message({
-          //     message: "查询成功",
-          //     type: "success"
-          //   });
-          //   //将查询到的用户数据赋值给tableData
-          //   this.tableData = res.data.list
-          //   // 将当前第几页每页多少条数据等赋值给pageparm
-          //   this.pageparm.currentPage = this.formInline.page
-          //   this.pageparm.pageSize = this.formInline.rows
-          //   this.pageparm.total = res.data.total
-          // }
         })
       }
       }

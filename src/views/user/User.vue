@@ -142,19 +142,19 @@
     <Pagination v-bind:child-msg="pageparm" @callFather="callFather"></Pagination>
 
     <!-- 编辑及新增弹窗 -->
-    <el-dialog :title="title" :visible.sync="editFormVisible" width="30%" @click="closeDialog" center>
+    <el-dialog :title="title" :visible.sync="editFormVisible" width="40%" @click="closeDialog" center>
       <el-form label-width="120px" :model="editForm" :rules="rules" ref="editForm">
         <el-form-item label="用户名" prop="username">
-          <el-input size="small"  auto-complete="off" v-model="editForm.username" placeholder="请输入用户名"></el-input>
+          <el-input size="small" style="width: 300px" auto-complete="off" v-model="editForm.username" placeholder="请输入用户名" @blur="checkUserName()"></el-input><span :style="style">{{errorUsername}}</span>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input size="small"  auto-complete="off" v-model="editForm.password" placeholder="请输入密码"></el-input>
+          <el-input size="small" style="width: 300px" auto-complete="off" v-model="editForm.password" placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
-          <el-input size="small"  auto-complete="off" v-model="editForm.phone" placeholder="请输入手机号"></el-input>
+          <el-input size="small" style="width: 300px" auto-complete="off" v-model="editForm.phone" placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-input size="small"  auto-complete="off" v-model="editForm.name" placeholder="请输入姓名"></el-input>
+          <el-input size="small" style="width: 300px" auto-complete="off" v-model="editForm.name" placeholder="请输入姓名"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-select v-model="editForm.sex" clearable placeholder="请选择性别" size="small">
@@ -227,7 +227,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="角色分配" :visible.sync="editFormVisible2" width="30%" @click="closeDialog" :before-close="handleDialogClose" center>
+    <el-dialog title="角色分配" :visible.sync="editFormVisible2"  v-loading="loading2" width="30%"  @click="closeDialog" :before-close="handleDialogClose" center>
       <el-form label-width="120px" :model="editForm"  ref="editForm">
         <el-form-item label="角色">
           <el-checkbox v-model="checked1" >超级管理员</el-checkbox>
@@ -259,12 +259,13 @@
 
 <script>
   import Pagination from "../public/Pagination";
-  import { findAllUser,getSearchData,addUser,updateUser,banUser,banUserRows,findRolesByUid,updateRoles } from '@/api/User'
+  import { findAllUser,getSearchData,addUser,updateUser,banUser,banUserRows,findRolesByUid,updateRoles,checkUserName } from '@/api/User'
   export default {
     name: "User",
     components: {Pagination},
     data() {
       return {
+        loading2:false,
         uid:'',
         par:'',
         loading1:false,
@@ -297,6 +298,10 @@
           pid:'',
           // token: localStorage.getItem('logintoken')
         },
+        style:{
+          color:'',
+
+        },
         //存放id的数组转换后的字符串
         logIds:"",
         updatearr:[],
@@ -310,6 +315,7 @@
           // name: '',
           //token: localStorage.getItem('logintoken')
         },
+        errorUsername:'',
         //表单验证
         rules: {
           gid: [
@@ -399,6 +405,20 @@
             this.$message.error('加载失败，请稍后再试！')
           })
       },
+      checkUserName(){
+        let params={username:this.editForm.username}
+        checkUserName(params).then(res=>{
+          if(res.data==null||res.data==''){
+            this.errorUsername="用户名可用"
+            this.style.color="green"
+          }else {
+            this.errorUsername="用户名已存在"
+            this.style.color="red"
+            this.$refs["editForm"].resetFields();
+          }
+
+        })
+      },
       async getSearch(){
         getSearchData().then(res=>{
           if(res.status==200){
@@ -482,11 +502,13 @@
       },
 
       handleEdit2: function (index, row) {
+        this.loading2=true
         this.editFormVisible2 = true
         this.uid=row.id
         let p={userId:row.id}
         findRolesByUid(p).then(res=>{
           if(res.status==200){
+            this.loading2=false
             this.rolesData=res.data
             for(let i=0;i<this.rolesData.length;i++){
               if(this.rolesData[i].id==1){

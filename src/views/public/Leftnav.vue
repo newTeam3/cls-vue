@@ -9,13 +9,15 @@
     text-color="#fff"
     active-text-color="#ffd04b"
     :unique-opened="true"
-    style="height: 100%">
+    style="height: 100%"
+    >
     <div class="logobox">
       <img class="logoimg" src="@/assets/img/logo.png" alt="">
     </div>
+    <div v-for="i in tableData.authorities" v-if="i.authority=='ROLE_root'">
     <el-submenu index="1">
       <template slot="title">
-        <i class="el-icon-location"></i>
+        <i class="el-icon-user-solid"></i>
         <span>用户管理</span>
       </template>
       <el-menu-item-group>
@@ -24,13 +26,18 @@
 <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
           <router-link to="/users/user">用户管理</router-link>
         </el-menu-item>
+        <el-menu-item index="1-2">
+          <i class="el-icon-menu"></i>
+          <!--          <router-link :to="{name:'UserProfile',params:{id:1}}">个人信息</router-link>-->
+          <router-link to="/users/role">角色管理</router-link>
+        </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
-
+    </div>
 
     <el-submenu index="2">
       <template slot="title">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-s-unfold"></i>
       <span slot="title">公共管理</span>
       </template>
       <el-menu-item-group>
@@ -58,7 +65,7 @@
     </el-submenu>
     <el-submenu index="3">
       <template slot="title">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-s-management"></i>
       <span slot="title">文章管理</span>
       </template>
       <el-menu-item-group>
@@ -78,7 +85,7 @@
     </el-submenu>
     <el-submenu index="4">
       <template slot="title">
-        <i class="el-icon-setting"></i>
+        <i class="el-icon-share"></i>
         <span slot="title">在线答题</span>
       </template>
       <el-menu-item-group>
@@ -102,7 +109,8 @@
     </el-submenu>
     <el-submenu index="5">
       <template slot="title">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-s-cooperation
+"></i>
       <span slot="title">任务管理</span>
       </template>
       <el-menu-item-group>
@@ -118,7 +126,7 @@
     </el-submenu>
     <el-submenu index="6">
       <template slot="title">
-      <i class="el-icon-setting"></i>
+      <i class="el-icon-s-order"></i>
       <span slot="title">日周报管理</span>
       </template>
       <el-menu-item-group>
@@ -134,7 +142,7 @@
     </el-submenu>
     <el-submenu index="7">
       <template slot="title">
-        <i class="el-icon-setting"></i>
+        <i class="el-icon-s-opportunity"></i>
         <span slot="title">答疑管理</span>
       </template>
       <el-menu-item-group>
@@ -150,7 +158,7 @@
     </el-submenu>
     <el-submenu index="8">
       <template slot="title">
-        <i class="el-icon-setting"></i>
+        <i class="el-icon-s-data"></i>
         <span slot="title">数据报表</span>
       </template>
       <el-menu-item-group>
@@ -181,8 +189,17 @@
 </template>
 
 <script>
+  import { userData } from '@/api/Topnav'
     export default {
         name: "Leftnav",
+      data(){
+        return{
+          tableData:[],
+        }
+      },
+      created() {
+          this.getData()
+      },
       methods: {
         handleOpen(key, keyPath) {
           console.log(key, keyPath);
@@ -193,6 +210,14 @@
         logout(){
           window.sessionStorage.clear()
           this.$router.push("/login")
+        },
+        async getData(){
+
+          userData().then(res => {
+              if(res.status==200){
+                this.tableData=res.data
+              }
+            })
         },
       }
     }

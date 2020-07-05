@@ -29,7 +29,7 @@ axios.interceptors.request.use(config=>{
     return response;
   }, function (error) {
     // 处理响应失败
-      Vue.prototype.$message.error('系统发生错误');
+      Vue.prototype.$message.error('用户名和密码错误');
 
     return Promise.reject(error);
   })

@@ -5,6 +5,7 @@ export const findAllUser = (params) => {
   // return req("post", "/findAll", params)
   return axios.post("/user/findAllUser",params).then(res=>res);
 };
+
 export const getSearchData = () => {
 
   return axios.get("/user/getSearchData").then(res=>res);
@@ -51,6 +52,12 @@ export const findRolesByUid = (params) => {
 };
 export const updateRoles = (params) => {
   return axios.get("/user/updateRoles",{
+    params:params
+  }).then(res=>res);
+};
+
+export const checkUserName = (params) => {
+  return axios.get("/user/checkUserName",{
     params:params
   }).then(res=>res);
 };

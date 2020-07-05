@@ -1,7 +1,8 @@
 <template>
   <div class="d1">
+    <h1 style="text-align: center;color: white">班级管理系统后台</h1>
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" class="login-box">
-      <h3 class="login-title">欢迎登录(账号密码均为admin)</h3>
+      <h3 class="login-title">欢迎登录(账号:admin 密码:123)</h3>
       <el-form-item label="账号" prop="username">
         <el-input type="text" placeholder="请输入账号" v-model="form.username"/>
       </el-form-item>
@@ -30,7 +31,6 @@
       </span>
     </el-dialog>
   </div>
-
 </template>
 
 <script>
@@ -81,23 +81,42 @@
             login(loginParams).then(res =>{
               this.logining = false;
               console.log(res)
-              if(res.status==200){
-                if (this.checked) {
-                  //保存帐号到cookie，有效期7天
-                  setCookie('user', this.form.username, 7)
-                  //保存密码到cookie，有效期7天
-                  setCookie('pwd', this.form.password, 7)
-                } else {
-                  delCookie('user')
-                  delCookie('pwd')
+              if(res.status==200) {
+                if(res.data.userVO.status==1){
+                console.log(res.data.userVO)
+                for (let value of res.data.userVO.authorities) {
+                  console.log("11:" + value.authority);
+                  if (value.authority == "ROLE_root" || value.authority == "ROLE_admin") {
+                    if (this.checked) {
+                      //保存帐号到cookie，有效期7天
+                      setCookie('user', this.form.username, 7)
+                      //保存密码到cookie，有效期7天
+                      setCookie('pwd', this.form.password, 7)
+                    } else {
+                      delCookie('user')
+                      delCookie('pwd')
+                    }
+                    this.$message({
+                      message: '登录成功',
+                      type: 'success'
+                    });
+                    this.$store.commit("login", res.data.token)
+                    console.log("success")
+                    this.$router.push("/echarts/echarts")
+                    break;
+                  } else {
+                    this.$message({
+                      message: "您没有登录此系统的权限",
+                      type: "error"
+                    });
+                  }
                 }
-                this.$message({
-                  message: '登录成功',
-                  type: 'success'
-                });
-                this.$store.commit("login",res.data.token)
-                console.log("success")
-                this.$router.push("/echarts/echarts")
+              }else{
+                  this.$message({
+                    message: "你的账号已被封禁，请联系管理员",
+                    type: "error"
+                  });
+                }
               }else{
                 this.$message({
                   message: "登录失败",
@@ -152,7 +171,7 @@
   .login-box {
     border: 1px solid #DCDFE6;
     width: 350px;
-    margin: 180px auto;
+    margin: 120px auto;
     padding: 35px 35px 15px 35px;
     /*border-radius: 5px;*/
     -webkit-border-radius: 5px;
@@ -169,7 +188,7 @@
     color: #303133;
   }
   .d1{
-    background-image: url(../assets/img/bgn.png);
+    background-image: url(../assets/img/bg.png);
     background-size:100% 100%;
     overflow: hidden;
     background-size: cover;

@@ -2,7 +2,7 @@
   <div>
     <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/echarts/echarts' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>学院管理</el-breadcrumb-item>
     </el-breadcrumb>
     <!--    搜索框-->
@@ -43,7 +43,7 @@
       <el-table-column
         prop="name"
         label="班级名"
-      >
+      >{row:5}
       </el-table-column>
       <el-table-column
         label="当前状态"
@@ -159,7 +159,6 @@
           tableData: [],
         }
       },
-
       /**
        * 页面加载完即调用
        */

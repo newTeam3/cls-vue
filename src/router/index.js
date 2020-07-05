@@ -47,6 +47,7 @@ import AddPaper from "../views/Answer/AddPaper";
 import UpdatePaper from "../views/Answer/UpdatePaper";
 import da from "element-ui/src/locale/lang/da";
 
+import Role from "../views/user/Role";
 
 Vue.use(Router);
 
@@ -69,6 +70,7 @@ export default new Router({
         //如果要使用props传参的方式，要添加props:true
         //用户菜单
         {path:'/users/user',name:'User',component:User},
+        {path:'/users/role',name:'Role',component:Role},
         {path:'/users/test',component:List},
         {path:'/Answer/Bank',component:Bank},
         {path:'/Answer/Wor',component:Wor},
